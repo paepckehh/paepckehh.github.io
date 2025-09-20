@@ -1,0 +1,3 @@
+https://st01.sslstream.dlf.de/dlf/01/high/aac/stream.aac
+https://st02.sslstream.dlf.de/dlf/02/high/aac/stream.aac
+https://st03.sslstream.dlf.de/dlf/03/high/aac/stream.aac
