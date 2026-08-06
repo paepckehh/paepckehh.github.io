@@ -12,6 +12,8 @@
         --white: #ffffff;
         --white-dim: rgba(255,255,255,0.65);
         --white-faint: rgba(255,255,255,0.12);
+        --ring: rgba(255,255,255,0.85);
+        color-scheme: dark;
       }
       * { box-sizing: border-box; }
       html, body { margin: 0; padding: 0; }
@@ -25,9 +27,24 @@
         text-align: center;
         overflow-x: hidden;
       }
-      header {
-        padding: 12vh 1rem 4vh;
+      /* subtle animated aurora layer */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background:
+          radial-gradient(420px 220px at 15% 12%, rgba(255,255,255,.10), transparent 70%),
+          radial-gradient(520px 280px at 88% 28%, rgba(255,255,255,.07), transparent 70%),
+          radial-gradient(420px 260px at 70% 92%, rgba(255,255,255,.06), transparent 70%);
+        animation: drift 22s ease-in-out infinite alternate;
+        z-index: 0;
       }
+      @keyframes drift {
+        0%   { transform: translate3d(0,0,0) scale(1); opacity: .85; }
+        100% { transform: translate3d(-1.5%,2%,0) scale(1.04); opacity: 1; }
+      }
+      header { padding: 11vh 1rem 3vh; position: relative; z-index: 1; }
       h1 {
         font-size: clamp(2rem, 6vw, 3.5rem);
         font-weight: 700;
@@ -36,23 +53,33 @@
         text-shadow: 0 2px 24px rgba(0,0,0,.25);
       }
       h1 .dot { color: var(--white-dim); }
+      h1 .cursor {
+        display: inline-block;
+        width: .08em;
+        height: 1em;
+        margin-left: .12em;
+        background: var(--white);
+        vertical-align: -.12em;
+        animation: blink 1.05s steps(2,end) infinite;
+      }
+      @keyframes blink { 50% { opacity: 0; } }
       .tagline {
         color: var(--white-dim);
         font-size: clamp(.85rem, 2vw, 1rem);
         letter-spacing: .18em;
         text-transform: uppercase;
-        margin: 0 0 2.5rem;
+        margin: 0 0 2.2rem;
       }
 
       /* search */
       .search-wrap {
-        max-width: 520px;
-        margin: 0 auto 3rem;
+        max-width: 540px;
+        margin: 0 auto 1.4rem;
         position: relative;
       }
       .search {
         width: 100%;
-        padding: .85rem 1.1rem .85rem 2.6rem;
+        padding: .9rem 2.6rem .9rem 2.6rem;
         font: inherit;
         color: var(--white);
         background: var(--white-faint);
@@ -84,6 +111,23 @@
         background: var(--white-dim);
         transform: rotate(45deg);
       }
+      .clear {
+        position: absolute;
+        right: .65rem; top: 50%; transform: translateY(-50%);
+        width: 22px; height: 22px;
+        border: none;
+        background: var(--white-faint);
+        color: var(--white);
+        border-radius: 50%;
+        cursor: pointer;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .15s, background .15s, transform .15s;
+        font-size: .8rem;
+        line-height: 1;
+      }
+      .clear.show { opacity: 1; pointer-events: auto; }
+      .clear:hover { background: rgba(255,255,255,.25); transform: translateY(-50%) scale(1.08); }
       .hint {
         margin-top: .7rem;
         font-size: .75rem;
@@ -98,13 +142,27 @@
         padding: 1px 5px;
         font-size: .7rem;
       }
+      .hint .sep { opacity: .5; margin: 0 .35rem; }
+
+      /* status strip */
+      .status {
+        font-size: .72rem;
+        letter-spacing: .14em;
+        text-transform: uppercase;
+        color: var(--white-dim);
+        margin: .2rem 0 0;
+        height: 1.1rem;
+        transition: color .2s;
+      }
+      .status b { color: var(--white); font-weight: 700; font-variant-numeric: tabular-nums; }
+      .status .dim { opacity: .55; }
 
       /* sections */
-      main { max-width: 1100px; margin: 0 auto; padding: 0 1rem 4rem; }
-      .section { margin: 0 0 2.2rem; }
+      main { max-width: 1100px; margin: 0 auto; padding: 0 1rem 3rem; position: relative; z-index: 1; }
+      .section { margin: 0 0 1.8rem; }
       .section-head {
         display: flex; align-items: center; gap: .9rem;
-        margin: 0 0 .9rem;
+        margin: 0 0 .7rem;
         opacity: .85;
       }
       .section-head .label {
@@ -123,26 +181,39 @@
         font-variant-numeric: tabular-nums;
       }
 
-      /* grid of buttons */
+      /* dial grid */
       .grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: .55rem;
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        gap: .5rem;
       }
       .grid a { text-decoration: none; }
       .btn {
+        position: relative;
         display: flex; align-items: center; justify-content: center;
-        padding: .7rem .9rem;
+        padding: .85rem .9rem;
         font: inherit;
-        font-size: .92rem;
+        font-size: .9rem;
         color: var(--white);
         background: rgba(255,255,255,.06);
         border: 1px solid rgba(255,255,255,.14);
-        border-radius: 10px;
+        border-radius: 12px;
         cursor: pointer;
-        transition: transform .12s ease, background .15s, border-color .15s, color .15s;
+        transition: transform .14s ease, background .15s, border-color .15s, color .15s, box-shadow .15s;
         user-select: none;
+        overflow: hidden;
       }
+      /* glossy sheen */
+      .btn::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(120deg, transparent 35%, rgba(255,255,255,.12) 50%, transparent 65%);
+        transform: translateX(-120%);
+        transition: transform .55s ease;
+        pointer-events: none;
+      }
+      .btn:hover::before, a:focus-visible .btn::before { transform: translateX(120%); }
       .btn:hover, a:focus-visible .btn {
         background: var(--white);
         color: var(--blue);
@@ -151,6 +222,21 @@
         box-shadow: 0 6px 18px rgba(0,0,0,.18);
       }
       .btn:active { transform: translateY(0) scale(.98); }
+      /* keyboard focus ring */
+      a:focus-visible { outline: none; }
+      .btn.is-active {
+        border-color: var(--ring);
+        box-shadow: 0 0 0 3px rgba(255,255,255,.22), 0 8px 20px rgba(0,0,0,.25);
+        transform: translateY(-2px);
+      }
+      .btn.is-active::after {
+        content: "↵";
+        position: absolute;
+        top: 4px; right: 7px;
+        font-size: .62rem;
+        opacity: .8;
+        letter-spacing: 0;
+      }
 
       .hidden { display: none !important; }
       .empty {
@@ -161,20 +247,19 @@
       }
 
       footer {
-        padding: 2rem 1rem 4rem;
+        padding: 1.4rem 1rem 3.5rem;
         color: var(--white-dim);
         font-size: .8rem;
         letter-spacing: .05em;
+        position: relative;
+        z-index: 1;
       }
       footer .row {
         display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center;
-        margin-bottom: 1.2rem;
+        margin-bottom: 1rem;
       }
       footer .row .btn { min-width: 130px; }
-      footer .sub {
-        margin-top: 1rem;
-        opacity: .7;
-      }
+      footer .sub { margin-top: 1rem; opacity: .7; }
 
       /* entrance animation */
       @keyframes rise {
@@ -189,21 +274,33 @@
       .section:nth-child(6) { animation-delay: .25s; }
       .section:nth-child(7) { animation-delay: .3s; }
       .section:nth-child(8) { animation-delay: .35s; }
+      .section:nth-child(9) { animation-delay: .4s; }
 
       @media (prefers-reduced-motion: reduce) {
         * { animation: none !important; transition: none !important; }
+        body::before { display: none; }
       }
     </style>
   </head>
   <body>
     <header>
-      <h1>paepcke<span class="dot">.</span>de</h1>
+      <h1>paepcke<span class="dot">.</span>de<span class="cursor" aria-hidden="true"></span></h1>
       <p class="tagline">open source projects</p>
       <div class="search-wrap">
         <span class="search-icon"></span>
         <input id="q" class="search" type="text" placeholder="filter projects…" autocomplete="off" spellcheck="false" aria-label="filter projects">
+        <button id="clear" class="clear" type="button" aria-label="clear">✕</button>
       </div>
-      <div class="hint">press <kbd>/</kbd> to search &middot; <kbd>Esc</kbd> to clear</div>
+      <div class="hint">
+        <kbd>/</kbd> search
+        <span class="sep">·</span>
+        <kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> dial
+        <span class="sep">·</span>
+        <kbd>Enter</kbd> open
+        <span class="sep">·</span>
+        <kbd>Esc</kbd> clear
+      </div>
+      <p class="status" id="status"><span class="dim">ready ·</span> <b id="total">0</b> projects</p>
     </header>
 
     <main id="list">
@@ -322,14 +419,42 @@
     <script>
       (function () {
         const input = document.getElementById('q');
+        const clearBtn = document.getElementById('clear');
+        const status = document.getElementById('status');
+        const totalEl = document.getElementById('total');
         const sections = document.querySelectorAll('#list .section');
-        const all = document.querySelectorAll('#list .grid a');
+        const grid = () => Array.from(document.querySelectorAll('#list .grid a'));
 
-        // count badges
-        sections.forEach(s => {
-          const n = s.querySelectorAll('.grid a').length;
-          s.querySelector('.count').textContent = n;
-        });
+        // count badges + grand total
+        function recount() {
+          let total = 0;
+          sections.forEach(s => {
+            const n = s.querySelectorAll('.grid a').length;
+            s.querySelector('.count').textContent = n;
+            total += n;
+          });
+          totalEl.textContent = total;
+        }
+        recount();
+
+        // visible dial tiles (in DOM order)
+        function visibleTiles() {
+          return grid().filter(a => a.offsetParent !== null && !a.classList.contains('hidden'));
+        }
+
+        // active (keyboard-focused) tile
+        let active = null;
+        function setActive(a) {
+          if (active && active.querySelector) active.querySelector('.btn')?.classList.remove('is-active');
+          active = a || null;
+          if (active) {
+            active.querySelector('.btn').classList.add('is-active');
+            active.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+            setStatus('<b>' + active.textContent + '</b> · Enter to open');
+          }
+        }
+
+        function setStatus(html) { status.innerHTML = html; }
 
         function filter() {
           const q = input.value.trim().toLowerCase();
@@ -343,16 +468,12 @@
               if (match) shown++;
             });
             total += shown;
-            // remove existing empty notice
             const old = s.querySelector('.empty');
             if (old) old.remove();
             s.classList.toggle('hidden', shown === 0);
             s.querySelector('.count').textContent = shown;
-            if (q && shown === 0) {
-              // section emptied by filter — just hide it (handled above)
-            }
           });
-          // global "no results"
+
           let notice = document.getElementById('noresults');
           if (total === 0) {
             if (!notice) {
@@ -360,27 +481,86 @@
               notice.id = 'noresults';
               notice.className = 'empty';
               notice.style.textAlign = 'center';
-              notice.textContent = 'no projects match "' + input.value + '"';
               document.getElementById('list').appendChild(notice);
-            } else {
-              notice.textContent = 'no projects match "' + input.value + '"';
             }
+            notice.textContent = 'no projects match "' + input.value + '"';
+            setStatus('<span class="dim">no matches</span>');
+            if (active) active.querySelector('.btn')?.classList.remove('is-active');
+            active = null;
           } else if (notice) {
             notice.remove();
+            if (!active) setStatus('<span class="dim">ready ·</span> <b>' + total + '</b> projects');
+            else setStatus('<b>' + active.textContent + '</b> · Enter to open');
           }
+
+          clearBtn.classList.toggle('show', q.length > 0);
         }
 
         input.addEventListener('input', filter);
 
-        // keyboard: / focuses, Esc clears
+        clearBtn.addEventListener('click', function () {
+          input.value = '';
+          filter();
+          input.focus();
+        });
+
+        // keyboard: / focuses, Esc clears, arrows dial, Enter opens
         document.addEventListener('keydown', function (e) {
           if (e.key === '/' && document.activeElement !== input) {
             e.preventDefault();
             input.focus();
-          } else if (e.key === 'Escape' && document.activeElement === input) {
+            return;
+          }
+          if (e.key === 'Escape') {
             input.value = '';
             filter();
             input.blur();
+            if (active) { active.querySelector('.btn')?.classList.remove('is-active'); }
+            active = null;
+            return;
+          }
+          if (e.key === 'Backspace' && document.activeElement !== input && document.activeElement.tagName !== 'INPUT') {
+            input.focus();
+            return;
+          }
+
+          const tiles = visibleTiles();
+          if (tiles.length === 0) return;
+          let idx = active ? tiles.indexOf(active) : -1;
+
+          switch (e.key) {
+            case 'ArrowRight':
+              e.preventDefault();
+              idx = (idx + 1 + tiles.length) % tiles.length;
+              setActive(tiles[idx]);
+              break;
+            case 'ArrowLeft':
+              e.preventDefault();
+              idx = (idx - 1 + tiles.length) % tiles.length;
+              setActive(tiles[idx]);
+              break;
+            case 'ArrowDown':
+              e.preventDefault();
+              idx = idx < 0 ? 0 : (idx + 1) % tiles.length;
+              setActive(tiles[idx]);
+              break;
+            case 'ArrowUp':
+              e.preventDefault();
+              idx = idx < 0 ? 0 : (idx - 1 + tiles.length) % tiles.length;
+              setActive(tiles[idx]);
+              break;
+            case 'Enter':
+              if (active) {
+                e.preventDefault();
+                window.location.href = active.href;
+              }
+              break;
+            case 'Home':
+              if (document.activeElement !== input) { e.preventDefault(); setActive(tiles[0]); }
+              break;
+            case 'End':
+              if (document.activeElement !== input) { e.preventDefault(); setActive(tiles[tiles.length-1]); }
+              break;
           }
         });
       })();
