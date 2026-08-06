@@ -1,116 +1,389 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1, shrink-to-fit=yes" name="viewport">
+    <title>paepcke.de</title>
     <style>
-    body {text-align: center; font-family: Helvetica; color:#FFF;background-color:#3367d5;}
-    h1 { margin-top: 10vh }
-    div { display: inline-block }
-    table { vertical-align: middle }
-    button        { background:#3367d5;color:#FFF;border:0px;padding:.5rem;font-style:normal;}
-    button:hover  { color:#3367d5;background:#FFF;border-radius:8px;padding:.5rem;font-style:normal;}
+      :root {
+        --blue: #3367d5;
+        --blue-dim: #2a54ad;
+        --blue-bright: #4a7fe0;
+        --white: #ffffff;
+        --white-dim: rgba(255,255,255,0.65);
+        --white-faint: rgba(255,255,255,0.12);
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; }
+      body {
+        font-family: Helvetica, Arial, sans-serif;
+        color: var(--white);
+        background: radial-gradient(1200px 800px at 50% -10%, var(--blue-bright), var(--blue) 60%, var(--blue-dim));
+        background-attachment: fixed;
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+        text-align: center;
+        overflow-x: hidden;
+      }
+      header {
+        padding: 12vh 1rem 4vh;
+      }
+      h1 {
+        font-size: clamp(2rem, 6vw, 3.5rem);
+        font-weight: 700;
+        letter-spacing: .02em;
+        margin: 0 0 .4rem;
+        text-shadow: 0 2px 24px rgba(0,0,0,.25);
+      }
+      h1 .dot { color: var(--white-dim); }
+      .tagline {
+        color: var(--white-dim);
+        font-size: clamp(.85rem, 2vw, 1rem);
+        letter-spacing: .18em;
+        text-transform: uppercase;
+        margin: 0 0 2.5rem;
+      }
+
+      /* search */
+      .search-wrap {
+        max-width: 520px;
+        margin: 0 auto 3rem;
+        position: relative;
+      }
+      .search {
+        width: 100%;
+        padding: .85rem 1.1rem .85rem 2.6rem;
+        font: inherit;
+        color: var(--white);
+        background: var(--white-faint);
+        border: 1px solid rgba(255,255,255,.18);
+        border-radius: 999px;
+        outline: none;
+        backdrop-filter: blur(6px);
+        transition: border-color .2s, background .2s, box-shadow .2s;
+      }
+      .search::placeholder { color: var(--white-dim); }
+      .search:focus {
+        border-color: rgba(255,255,255,.55);
+        background: rgba(255,255,255,.18);
+        box-shadow: 0 0 0 4px rgba(255,255,255,.08);
+      }
+      .search-icon {
+        position: absolute;
+        left: 1rem; top: 50%; transform: translateY(-50%);
+        width: 14px; height: 14px;
+        border: 2px solid var(--white-dim);
+        border-radius: 50%;
+        pointer-events: none;
+      }
+      .search-icon::after {
+        content: "";
+        position: absolute;
+        right: -6px; bottom: -2px;
+        width: 6px; height: 2px;
+        background: var(--white-dim);
+        transform: rotate(45deg);
+      }
+      .hint {
+        margin-top: .7rem;
+        font-size: .75rem;
+        color: var(--white-dim);
+        letter-spacing: .05em;
+      }
+      .hint kbd {
+        font-family: Helvetica;
+        background: var(--white-faint);
+        border: 1px solid rgba(255,255,255,.2);
+        border-radius: 4px;
+        padding: 1px 5px;
+        font-size: .7rem;
+      }
+
+      /* sections */
+      main { max-width: 1100px; margin: 0 auto; padding: 0 1rem 4rem; }
+      .section { margin: 0 0 2.2rem; }
+      .section-head {
+        display: flex; align-items: center; gap: .9rem;
+        margin: 0 0 .9rem;
+        opacity: .85;
+      }
+      .section-head .label {
+        font-weight: 700;
+        letter-spacing: .12em;
+        font-size: .8rem;
+        white-space: nowrap;
+      }
+      .section-head .rule {
+        height: 1px; flex: 1;
+        background: linear-gradient(90deg, rgba(255,255,255,.35), rgba(255,255,255,0));
+      }
+      .section-head .count {
+        font-size: .7rem;
+        color: var(--white-dim);
+        font-variant-numeric: tabular-nums;
+      }
+
+      /* grid of buttons */
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: .55rem;
+      }
+      .grid a { text-decoration: none; }
+      .btn {
+        display: flex; align-items: center; justify-content: center;
+        padding: .7rem .9rem;
+        font: inherit;
+        font-size: .92rem;
+        color: var(--white);
+        background: rgba(255,255,255,.06);
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 10px;
+        cursor: pointer;
+        transition: transform .12s ease, background .15s, border-color .15s, color .15s;
+        user-select: none;
+      }
+      .btn:hover, a:focus-visible .btn {
+        background: var(--white);
+        color: var(--blue);
+        border-color: var(--white);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(0,0,0,.18);
+      }
+      .btn:active { transform: translateY(0) scale(.98); }
+
+      .hidden { display: none !important; }
+      .empty {
+        grid-column: 1 / -1;
+        color: var(--white-dim);
+        padding: 1rem;
+        font-size: .9rem;
+      }
+
+      footer {
+        padding: 2rem 1rem 4rem;
+        color: var(--white-dim);
+        font-size: .8rem;
+        letter-spacing: .05em;
+      }
+      footer .row {
+        display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center;
+        margin-bottom: 1.2rem;
+      }
+      footer .row .btn { min-width: 130px; }
+      footer .sub {
+        margin-top: 1rem;
+        opacity: .7;
+      }
+
+      /* entrance animation */
+      @keyframes rise {
+        from { opacity: 0; transform: translateY(8px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+      .section, .oss, .personal { animation: rise .5s ease both; }
+      .section:nth-child(2) { animation-delay: .05s; }
+      .section:nth-child(3) { animation-delay: .1s; }
+      .section:nth-child(4) { animation-delay: .15s; }
+      .section:nth-child(5) { animation-delay: .2s; }
+      .section:nth-child(6) { animation-delay: .25s; }
+      .section:nth-child(7) { animation-delay: .3s; }
+      .section:nth-child(8) { animation-delay: .35s; }
+
+      @media (prefers-reduced-motion: reduce) {
+        * { animation: none !important; transition: none !important; }
+      }
     </style>
-  <title>paepcke.de</title>
   </head>
   <body>
-    <center>
-      <br><h2>paepcke.de</h2>
-      <h2><br>open source projects</h2>
-      <div>
-        <table cellspacing="0">
-          <tbody>
-            <tr><td><center><b>
-              [ A ]
-            </b></center></td></tr><tr><td><center>
-                  <a href="aiagent"><button>aiagent</button></a>
-                  <a href="airloctag"><button>airloctag</button></a>
-                  <a href="appliance-builder"><button>appliance</button></a>
-                  <a href="asn2pf"><button>asn2pf</button></a>
-            </center></td></tr><tr><td><center><b>
-              [ C ]
-            </b></center></td></tr><tr><td><center>
-                  <a href="certinfo"><button>certinfo</button></a>
-                  <a href="cliqr"><button>cliqr</button></a>
-                  <a href="codereview"><button>codereview</button></a>
-                  <a href="codescore"><button>codescore</button></a>
-             </center></td></tr><tr><td><center><b>
-               [ D ]
-             </b></center></td></tr><tr><td><center>
-                  <a href="daylight"><button>daylight</button></a>
-                  <a href="dnscache"><button>dnscache</button></a>
-                  <a href="dnsinfo"><button>dnsinfo</button></a>
-                  <a href="dnsresolver"><button>dnsresolver</button></a>
-             </center></td></tr><tr><td><center><b>
-               [ F - G ]
-             </b></center></td></tr><tr><td><center>
-                  <a href="fsdd"><button>fsdd</button></a>
-                  <a href="gitkeys"><button>gitkeys</button></a>
-                  <a href="gpsinfo"><button>gpsinfo</button></a>
-                  <a href="gpstime"><button>gpstime</button></a>
-             </center></td></tr><tr><td><center><b>
-               [ H - L ]
-             </b></center></td></tr><tr><td><center>
-                  <a href="hq"><button>hq</button></a>
-                  <a href="keys"><button>keys</button></a>
-                  <a href="lockssl"><button>lockssl</button></a>
-                  <a href="logsec"><button>logsec</button></a>
-                  <a href="lteinfo"><button>lteinfo</button></a>
-             </center></td></tr><tr><td><center><b>
-                [ M - N ] 
-             </b></center></td></tr><tr><td><center>
-                  <a href="matrix-log-chat"><button>matrix-log-chat</button></a>
-                  <a href="nixos"><button>nixos</button></a>
-                  <a href="npad"><button>npad</button></a>
-             </center></td></tr><tr><td><center><b>
-                [ O - R ]
-             </b></center></td></tr><tr><td><center>
-                  <a href="opnborg"><button>opnborg</button></a>
-                  <a href="osm2addr"><button>osm2addr</button></a>
-                  <a href="reportstyle"><button>reportstyle</button></a>
-             </center></td></tr><tr><td><center><b>
-                [ S ]
-             </b></center></td></tr><tr><td><center>
-                  <a href="signify"><button>signify</button></a>
-                  <a href="solaredge_exporter"><button>solaredge_exporter</button></a>
-                  <a href="sphincs"><button>sphincs</button></a>
-                  <a href="squidr"><button>squidr</button></a>
-                  <a href="signify"><button>signify</button></a>
-             </center></td></tr><tr><td><center><b>
-                [ T - Z ]
-             </b></center></td></tr><tr><td><center>
-                  <a href="tlsinfo"><button>tlsinfo</button></a>
-                  <a href="uniex"><button>uniex</button></a>
-                  <a href="yopass-ng"><button>yopass-ng</button></a>
-                  <a href="zdash"><button>zdash</button></a>
-                </center>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+    <header>
+      <h1>paepcke<span class="dot">.</span>de</h1>
+      <p class="tagline">open source projects</p>
+      <div class="search-wrap">
+        <span class="search-icon"></span>
+        <input id="q" class="search" type="text" placeholder="filter projects…" autocomplete="off" spellcheck="false" aria-label="filter projects">
       </div>
-      <h2><br>oss</h2>
-      <table>
-        <tbody>
-          <tr>
-            <td><a href="https://en.wikipedia.org/wiki/Open-source_software"><button>OSS What?</button></a></td>
-            <td><a href="https://opensource.com/article/21/11/open-source-un-sustainability"><button>OSS Why?</button></a></td>
-            <td><a href="https://opensustain.tech/"><button>OSS How?</button></a></td>
-            <td><a href="https://www.library.hbs.edu/working-knowledge/open-source-software-the-nine-trillion-resource-companies-take-for-granted"><button>OSS Business?</button></a></td>
-          </tr>
-        </tbody>
-      </table>
-      <h2><br>personal</h2>
-      <table>
-        <tbody>
-          <tr>
-            <td><a href="https://infosec.exchange/@paepcke"><button>social blog news</button></a></td>
-            <td><a href="https://github.com/paepckehh"><button>github.com</button></a></td>
-            <td><a href="imp.html"><button>contact impressum</button></a></td>
-          </tr>
-        </tbody>
-      </table>
-    </center>
-    <br>
+      <div class="hint">press <kbd>/</kbd> to search &middot; <kbd>Esc</kbd> to clear</div>
+    </header>
+
+    <main id="list">
+      <section class="section" data-section="A">
+        <div class="section-head"><span class="label">[ A ]</span><span class="rule"></span><span class="count"></span></div>
+        <div class="grid">
+          <a href="aiagent"><span class="btn">aiagent</span></a>
+          <a href="airloctag"><span class="btn">airloctag</span></a>
+          <a href="appliance-builder"><span class="btn">appliance</span></a>
+          <a href="asn2pf"><span class="btn">asn2pf</span></a>
+        </div>
+      </section>
+
+      <section class="section" data-section="C">
+        <div class="section-head"><span class="label">[ C ]</span><span class="rule"></span><span class="count"></span></div>
+        <div class="grid">
+          <a href="certinfo"><span class="btn">certinfo</span></a>
+          <a href="cliqr"><span class="btn">cliqr</span></a>
+          <a href="codereview"><span class="btn">codereview</span></a>
+          <a href="codescore"><span class="btn">codescore</span></a>
+        </div>
+      </section>
+
+      <section class="section" data-section="D">
+        <div class="section-head"><span class="label">[ D ]</span><span class="rule"></span><span class="count"></span></div>
+        <div class="grid">
+          <a href="daylight"><span class="btn">daylight</span></a>
+          <a href="dnscache"><span class="btn">dnscache</span></a>
+          <a href="dnsinfo"><span class="btn">dnsinfo</span></a>
+          <a href="dnsresolver"><span class="btn">dnsresolver</span></a>
+        </div>
+      </section>
+
+      <section class="section" data-section="F-G">
+        <div class="section-head"><span class="label">[ F - G ]</span><span class="rule"></span><span class="count"></span></div>
+        <div class="grid">
+          <a href="fsdd"><span class="btn">fsdd</span></a>
+          <a href="gitkeys"><span class="btn">gitkeys</span></a>
+          <a href="gpsinfo"><span class="btn">gpsinfo</span></a>
+          <a href="gpstime"><span class="btn">gpstime</span></a>
+        </div>
+      </section>
+
+      <section class="section" data-section="H-L">
+        <div class="section-head"><span class="label">[ H - L ]</span><span class="rule"></span><span class="count"></span></div>
+        <div class="grid">
+          <a href="hq"><span class="btn">hq</span></a>
+          <a href="keys"><span class="btn">keys</span></a>
+          <a href="lockssl"><span class="btn">lockssl</span></a>
+          <a href="logsec"><span class="btn">logsec</span></a>
+          <a href="lteinfo"><span class="btn">lteinfo</span></a>
+        </div>
+      </section>
+
+      <section class="section" data-section="M-N">
+        <div class="section-head"><span class="label">[ M - N ]</span><span class="rule"></span><span class="count"></span></div>
+        <div class="grid">
+          <a href="matrix-log-chat"><span class="btn">matrix-log-chat</span></a>
+          <a href="nixos"><span class="btn">nixos</span></a>
+          <a href="npad"><span class="btn">npad</span></a>
+        </div>
+      </section>
+
+      <section class="section" data-section="O-R">
+        <div class="section-head"><span class="label">[ O - R ]</span><span class="rule"></span><span class="count"></span></div>
+        <div class="grid">
+          <a href="opnborg"><span class="btn">opnborg</span></a>
+          <a href="osm2addr"><span class="btn">osm2addr</span></a>
+          <a href="reportstyle"><span class="btn">reportstyle</span></a>
+        </div>
+      </section>
+
+      <section class="section" data-section="S">
+        <div class="section-head"><span class="label">[ S ]</span><span class="rule"></span><span class="count"></span></div>
+        <div class="grid">
+          <a href="signify"><span class="btn">signify</span></a>
+          <a href="solaredge_exporter"><span class="btn">solaredge_exporter</span></a>
+          <a href="sphincs"><span class="btn">sphincs</span></a>
+          <a href="squidr"><span class="btn">squidr</span></a>
+          <a href="signify"><span class="btn">signify</span></a>
+        </div>
+      </section>
+
+      <section class="section" data-section="T-Z">
+        <div class="section-head"><span class="label">[ T - Z ]</span><span class="rule"></span><span class="count"></span></div>
+        <div class="grid">
+          <a href="tlsinfo"><span class="btn">tlsinfo</span></a>
+          <a href="uniex"><span class="btn">uniex</span></a>
+          <a href="yopass-ng"><span class="btn">yopass-ng</span></a>
+          <a href="zdash"><span class="btn">zdash</span></a>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <section class="oss">
+        <div class="section-head" style="justify-content:center"><span class="label">OSS</span><span class="rule" style="max-width:120px"></span></div>
+        <div class="row">
+          <a href="https://en.wikipedia.org/wiki/Open-source_software"><span class="btn">What?</span></a>
+          <a href="https://opensource.com/article/21/11/open-source-un-sustainability"><span class="btn">Why?</span></a>
+          <a href="https://opensustain.tech/"><span class="btn">How?</span></a>
+          <a href="https://www.library.hbs.edu/working-knowledge/open-source-software-the-nine-trillion-resource-companies-take-for-granted"><span class="btn">Business?</span></a>
+        </div>
+      </section>
+      <section class="personal">
+        <div class="section-head" style="justify-content:center"><span class="label">PERSONAL</span><span class="rule" style="max-width:120px"></span></div>
+        <div class="row">
+          <a href="https://infosec.exchange/@paepcke"><span class="btn">social blog news</span></a>
+          <a href="https://github.com/paepckehh"><span class="btn">github.com</span></a>
+          <a href="imp.html"><span class="btn">contact impressum</span></a>
+        </div>
+      </section>
+      <div class="sub"><a href="https://paepcke.de" style="color:inherit">[ home ]</a></div>
+    </footer>
+
+    <script>
+      (function () {
+        const input = document.getElementById('q');
+        const sections = document.querySelectorAll('#list .section');
+        const all = document.querySelectorAll('#list .grid a');
+
+        // count badges
+        sections.forEach(s => {
+          const n = s.querySelectorAll('.grid a').length;
+          s.querySelector('.count').textContent = n;
+        });
+
+        function filter() {
+          const q = input.value.trim().toLowerCase();
+          let total = 0;
+          sections.forEach(s => {
+            let shown = 0;
+            s.querySelectorAll('.grid a').forEach(a => {
+              const text = a.textContent.toLowerCase();
+              const match = !q || text.includes(q);
+              a.classList.toggle('hidden', !match);
+              if (match) shown++;
+            });
+            total += shown;
+            // remove existing empty notice
+            const old = s.querySelector('.empty');
+            if (old) old.remove();
+            s.classList.toggle('hidden', shown === 0);
+            s.querySelector('.count').textContent = shown;
+            if (q && shown === 0) {
+              // section emptied by filter — just hide it (handled above)
+            }
+          });
+          // global "no results"
+          let notice = document.getElementById('noresults');
+          if (total === 0) {
+            if (!notice) {
+              notice = document.createElement('div');
+              notice.id = 'noresults';
+              notice.className = 'empty';
+              notice.style.textAlign = 'center';
+              notice.textContent = 'no projects match "' + input.value + '"';
+              document.getElementById('list').appendChild(notice);
+            } else {
+              notice.textContent = 'no projects match "' + input.value + '"';
+            }
+          } else if (notice) {
+            notice.remove();
+          }
+        }
+
+        input.addEventListener('input', filter);
+
+        // keyboard: / focuses, Esc clears
+        document.addEventListener('keydown', function (e) {
+          if (e.key === '/' && document.activeElement !== input) {
+            e.preventDefault();
+            input.focus();
+          } else if (e.key === 'Escape' && document.activeElement === input) {
+            input.value = '';
+            filter();
+            input.blur();
+          }
+        });
+      })();
+    </script>
   </body>
 </html>
