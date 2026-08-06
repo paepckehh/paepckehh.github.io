@@ -441,6 +441,38 @@
         function visibleTiles() {
           return grid().filter(a => a.offsetParent !== null && !a.classList.contains('hidden'));
         }
+        function visibleSections() {
+          return Array.from(sections).filter(s => s.offsetParent !== null && !s.classList.contains('hidden'));
+        }
+        function sectionTiles(s) {
+          return Array.from(s.querySelectorAll('.grid a')).filter(a => a.offsetParent !== null && !a.classList.contains('hidden'));
+        }
+        // number of grid columns in a section (measured from its first row)
+        function colsOf(tiles) {
+          if (!tiles.length) return 1;
+          const firstTop = tiles[0].offsetTop;
+          let cols = 0;
+          for (const t of tiles) { if (t.offsetTop === firstTop) cols++; else break; }
+          return Math.max(1, cols);
+        }
+        // jump vertically to the next/previous letter category, keeping the
+        // same horizontal (column) position within the target section's first row.
+        function jumpCategory(dir) {
+          if (!active) { const t = visibleTiles()[0]; if (t) setActive(t); return; }
+          const curSec = active.closest('.section');
+          const visSecs = visibleSections();
+          const curIdx = visSecs.indexOf(curSec);
+          let target = null;
+          for (let i = curIdx + dir; i >= 0 && i < visSecs.length; i += dir) {
+            if (sectionTiles(visSecs[i]).length) { target = visSecs[i]; break; }
+          }
+          if (!target) return;
+          const curTiles = sectionTiles(curSec);
+          const curCols = colsOf(curTiles);
+          const col = curTiles.indexOf(active) % curCols;
+          const targetTiles = sectionTiles(target);
+          setActive(targetTiles[Math.min(col, targetTiles.length - 1)]);
+        }
 
         // active (keyboard-focused) tile
         let active = null;
@@ -541,13 +573,11 @@
               break;
             case 'ArrowDown':
               e.preventDefault();
-              idx = idx < 0 ? 0 : (idx + 1) % tiles.length;
-              setActive(tiles[idx]);
+              jumpCategory(1);
               break;
             case 'ArrowUp':
               e.preventDefault();
-              idx = idx < 0 ? 0 : (idx - 1 + tiles.length) % tiles.length;
-              setActive(tiles[idx]);
+              jumpCategory(-1);
               break;
             case 'Enter':
               if (active) {
