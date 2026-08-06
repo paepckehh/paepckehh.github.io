@@ -1,20 +1,154 @@
-<html><head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
-<meta name="go-import" content="paepcke.de/lteinfo git https://github.com/paepckehh/lteinfo">
-<style>
-    body {text-align: center; font-family: Helvetica; color:#FFF;background-color:#3367d5;}
-    h1 { margin-top: 10vh }
-    div { display: inline-block }
-    table { vertical-align: middle }
-    button        { background:#3367d5;color:#FFF;border:0px;padding:.5rem;font-style:normal;}
-    button:hover  { color:#3367d5;background:#FFF;border-radius:8px;padding:.5rem;font-style:normal;}
-</style>
-<title>lteinfo</title></head>
-<body><h1>lteinfo</h1>
-<div><table cellspacing="0">
-<tr><td>INSTALL</td><td><button>go install paepcke.de/lteinfo/cmd/lteinfo@latest</button></td></tr>
-<tr><td>DOCS</td><td><a href="https://pkg.go.dev/paepcke.de/lteinfo"><button>pkg.go.dev/paepcke.de/lteinfo</button></a></td></tr>
-<tr><td>REPO</td><td><a href="https://github.com/paepckehh/lteinfo"><button>github.com/paepckehh/lteinfo</button></a></td></tr>
-<tr><td>DOWNLOAD</td><td><a href="https://github.com/paepckehh/lteinfo/releases"><button>[click]</button></a></td></tr>
-</table></div><br><br><br><a href="https://paepcke.de"><button>[home]</button></a></body></html>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=yes" name="viewport">
+    <meta name="go-import" content="paepcke.de/lteinfo git https://github.com/paepckehh/lteinfo">
+    <title>lteinfo</title>
+    <style>
+      :root {
+        --blue: #3367d5;
+        --blue-dim: #2a54ad;
+        --blue-bright: #4a7fe0;
+        --white: #ffffff;
+        --white-dim: rgba(255,255,255,0.65);
+        --white-faint: rgba(255,255,255,0.12);
+        color-scheme: dark;
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; }
+      body {
+        font-family: Helvetica, Arial, sans-serif;
+        color: var(--white);
+        background: radial-gradient(1200px 800px at 50% -10%, var(--blue-bright), var(--blue) 60%, var(--blue-dim));
+        background-attachment: fixed;
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+        text-align: center;
+        overflow-x: hidden;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background:
+          radial-gradient(420px 220px at 15% 12%, rgba(255,255,255,.10), transparent 70%),
+          radial-gradient(520px 280px at 88% 28%, rgba(255,255,255,.07), transparent 70%),
+          radial-gradient(420px 260px at 70% 92%, rgba(255,255,255,.06), transparent 70%);
+        animation: drift 22s ease-in-out infinite alternate;
+        z-index: 0;
+      }
+      @keyframes drift {
+        0%   { transform: translate3d(0,0,0) scale(1); opacity: .85; }
+        100% { transform: translate3d(-1.5%,2%,0) scale(1.04); opacity: 1; }
+      }
+      header { padding: 11vh 1rem 3vh; position: relative; z-index: 1; }
+      h1 {
+        font-size: clamp(2rem, 6vw, 3.5rem);
+        font-weight: 700;
+        letter-spacing: .02em;
+        margin: 0 0 .4rem;
+        text-shadow: 0 2px 24px rgba(0,0,0,.25);
+      }
+      .tagline {
+        color: var(--white-dim);
+        font-size: clamp(.85rem, 2vw, 1rem);
+        letter-spacing: .18em;
+        text-transform: uppercase;
+        margin: 0 0 2.2rem;
+      }
+      main { position: relative; z-index: 1; padding: 0 1rem 3rem; }
+      .card {
+        display: inline-block;
+        padding: 1.6rem 1.8rem;
+        background: rgba(255,255,255,.06);
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 16px;
+        backdrop-filter: blur(6px);
+      }
+      table { border-collapse: collapse; margin: 0 auto; }
+      td {
+        padding: .5rem .8rem;
+        text-align: left;
+        vertical-align: middle;
+      }
+      td.label {
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: .14em;
+        text-transform: uppercase;
+        color: var(--white-dim);
+        white-space: nowrap;
+      }
+      .btn {
+        position: relative;
+        display: inline-flex; align-items: center; justify-content: center;
+        padding: .7rem 1rem;
+        font: inherit;
+        font-size: .9rem;
+        color: var(--white);
+        background: rgba(255,255,255,.06);
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 12px;
+        cursor: pointer;
+        transition: transform .14s ease, background .15s, border-color .15s, color .15s, box-shadow .15s;
+        user-select: none;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+      .btn::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(120deg, transparent 35%, rgba(255,255,255,.12) 50%, transparent 65%);
+        transform: translateX(-120%);
+        transition: transform .55s ease;
+        pointer-events: none;
+      }
+      .btn:hover::before, a:focus-visible .btn::before { transform: translateX(120%); }
+      .btn:hover, a:focus-visible .btn {
+        background: var(--white);
+        color: var(--blue);
+        border-color: var(--white);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(0,0,0,.18);
+      }
+      .btn:active { transform: translateY(0) scale(.98); }
+      a { text-decoration: none; }
+      a:focus-visible { outline: none; }
+      code {
+        font-family: "SFMono-Regular", Menlo, Consolas, monospace;
+        font-size: .85rem;
+      }
+      .home { margin-top: 2.4rem; }
+      @keyframes rise {
+        from { opacity: 0; transform: translateY(8px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+      header, main { animation: rise .5s ease both; }
+      main { animation-delay: .08s; }
+      @media (prefers-reduced-motion: reduce) {
+        * { animation: none !important; transition: none !important; }
+        body::before { display: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>lteinfo</h1>
+      <p class="tagline">paepcke.de</p>
+    </header>
+    <main>
+      <div class="card">
+        <table>
+          <tr><td class="label">INSTALL</td><td><span class="btn"><code>go install paepcke.de/lteinfo/cmd/lteinfo@latest</code></span></td></tr>
+          <tr><td class="label">DOCS</td><td><a href="https://pkg.go.dev/paepcke.de/lteinfo"><span class="btn">pkg.go.dev/paepcke.de/lteinfo</span></a></td></tr>
+          <tr><td class="label">REPO</td><td><a href="https://github.com/paepckehh/lteinfo"><span class="btn">github.com/paepckehh/lteinfo</span></a></td></tr>
+          <tr><td class="label">DOWNLOAD</td><td><a href="https://github.com/paepckehh/lteinfo/releases"><span class="btn">[click]</span></a></td></tr>
+        </table>
+      </div>
+      <div class="home"><a href="https://paepcke.de"><span class="btn">[ home ]</span></a></div>
+    </main>
+  </body>
+</html>
