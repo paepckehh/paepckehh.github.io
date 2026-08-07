@@ -258,6 +258,13 @@
         0% { opacity: 0; transform: scale(.92) translateY(4px); }
         100% { opacity: 1; transform: scale(1) translateY(0); }
       }
+      /* recurring random jitter bling — each tile subtly pulses on its own clock */
+      .grid .btn { animation: jitter var(--jit-dur, 6s) ease-in-out infinite var(--jit-delay, 0s); }
+      @keyframes jitter {
+        0%, 92%, 100% { transform: scale(1); }
+        95% { transform: scale(1.035); }
+        97% { transform: scale(.992); }
+      }
 
       .hidden { display: none !important; }
       .empty {
@@ -282,6 +289,28 @@
       footer .row .btn { min-width: 130px; }
       footer .sub { margin-top: 1rem; opacity: .7; }
 
+      /* semver bubble — upper-right corner */
+      .ver {
+        position: fixed;
+        top: .8rem; right: .8rem;
+        z-index: 5;
+        font-size: .68rem;
+        font-family: "SFMono-Regular", Menlo, Consolas, monospace;
+        letter-spacing: .04em;
+        color: var(--white);
+        background: rgba(255,255,255,.08);
+        border: 1px solid rgba(255,255,255,.18);
+        border-radius: 999px;
+        padding: .28rem .65rem;
+        opacity: 0;
+        transform: translateY(-4px);
+        transition: opacity .4s ease, transform .4s ease;
+        backdrop-filter: blur(6px);
+        user-select: none;
+        pointer-events: none;
+      }
+      .ver.ready { opacity: .75; transform: translateY(0); }
+
       /* entrance animation */
       @keyframes rise {
         from { opacity: 0; transform: translateY(8px); }
@@ -304,6 +333,7 @@
     </style>
   </head>
   <body>
+    <span class="ver" id="ver" aria-label="site version">v0.1.20</span>
     <header>
       <h1>paepcke<span class="dot">.</span>de<span class="cursor" aria-hidden="true"></span></h1>
       <p class="tagline">open source projects</p>
@@ -446,12 +476,23 @@
         const sections = document.querySelectorAll('#list .section');
         const grid = () => Array.from(document.querySelectorAll('#list .grid a'));
 
-        // subtle gradient pop bling — staggered pop-in per tile
+        // subtle gradient pop bling — staggered pop-in + recurring random jitter per tile
         (function bling() {
           const tiles = document.querySelectorAll('#list .grid a');
           tiles.forEach((link, i) => {
             link.style.setProperty('--pop-in', (i * 0.018 + Math.random() * 0.05).toFixed(3) + 's');
+            const btn = link.querySelector('.btn');
+            if (btn) {
+              btn.style.setProperty('--jit-delay', (Math.random() * 6).toFixed(2) + 's');
+              btn.style.setProperty('--jit-dur', (5 + Math.random() * 5).toFixed(2) + 's');
+            }
           });
+        })();
+
+        // semver bubble text is embedded in the #ver element (updated per release)
+        (function versionBubble() {
+          const el = document.getElementById('ver');
+          if (el) el.classList.add('ready');
         })();
 
         // count badges + grand total
