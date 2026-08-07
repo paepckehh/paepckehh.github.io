@@ -238,31 +238,16 @@
         letter-spacing: 0;
       }
 
-      /* bling bling pop — random per-tile sparkle + tinted glow */
-      .grid .btn { --pop: 210; }
+      /* subtle gradient pop bling — white-only, keeps color schema */
       .grid .btn {
-        background-image: radial-gradient(130% 130% at 100% 0%, hsl(var(--pop) 85% 65% / .14), transparent 58%);
-      }
-      .grid .btn::after {
-        content: "";
-        position: absolute;
-        top: 5px; right: 6px;
-        width: 5px; height: 5px;
-        border-radius: 50%;
-        background: hsl(var(--pop) 95% 75%);
-        box-shadow: 0 0 7px 2px hsl(var(--pop) 95% 70% / .65);
-        opacity: 0;
-        pointer-events: none;
-        animation: twinkle var(--pop-dur, 3.4s) ease-in-out infinite;
-        animation-delay: var(--pop-delay, 0s);
-      }
-      @keyframes twinkle {
-        0%, 100% { opacity: 0; transform: scale(.3); }
-        45% { opacity: .95; transform: scale(1.15); }
-        55% { opacity: .95; transform: scale(1); }
+        background-image:
+          linear-gradient(135deg, rgba(255,255,255,.05), transparent 55%),
+          radial-gradient(140% 120% at 0% 0%, rgba(255,255,255,.06), transparent 60%);
       }
       .grid a:hover .btn, .grid a:focus-visible .btn {
-        box-shadow: 0 6px 20px hsl(var(--pop) 85% 55% / .45), 0 0 0 1px hsl(var(--pop) 90% 75% / .5) inset;
+        background-image:
+          linear-gradient(135deg, rgba(255,255,255,.10), transparent 60%),
+          radial-gradient(140% 120% at 0% 0%, rgba(255,255,255,.12), transparent 62%);
       }
       /* staggered pop-in entrance */
       .grid a {
@@ -270,8 +255,8 @@
         animation-delay: var(--pop-in, 0s);
       }
       @keyframes pop {
-        0% { opacity: 0; transform: scale(.82); }
-        100% { opacity: 1; transform: scale(1); }
+        0% { opacity: 0; transform: scale(.92) translateY(4px); }
+        100% { opacity: 1; transform: scale(1) translateY(0); }
       }
 
       .hidden { display: none !important; }
@@ -461,18 +446,11 @@
         const sections = document.querySelectorAll('#list .section');
         const grid = () => Array.from(document.querySelectorAll('#list .grid a'));
 
-        // bling bling pop — assign each tile a random hue + staggered sparkle + pop-in
+        // subtle gradient pop bling — staggered pop-in per tile
         (function bling() {
-          const tiles = document.querySelectorAll('#list .grid a .btn');
-          let i = 0;
-          tiles.forEach(btn => {
-            const hue = Math.floor(Math.random() * 360);
-            btn.style.setProperty('--pop', hue);
-            btn.style.setProperty('--pop-delay', (Math.random() * 4).toFixed(2) + 's');
-            btn.style.setProperty('--pop-dur', (2.6 + Math.random() * 2.4).toFixed(2) + 's');
-            const link = btn.closest('a');
-            if (link) link.style.setProperty('--pop-in', (i * 0.018 + Math.random() * 0.05).toFixed(3) + 's');
-            i++;
+          const tiles = document.querySelectorAll('#list .grid a');
+          tiles.forEach((link, i) => {
+            link.style.setProperty('--pop-in', (i * 0.018 + Math.random() * 0.05).toFixed(3) + 's');
           });
         })();
 
