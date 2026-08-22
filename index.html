@@ -238,6 +238,34 @@
         letter-spacing: 0;
       }
 
+      /* subtle gradient pop bling — white-only, keeps color schema */
+      .grid .btn {
+        background-image:
+          linear-gradient(135deg, rgba(255,255,255,.05), transparent 55%),
+          radial-gradient(140% 120% at 0% 0%, rgba(255,255,255,.06), transparent 60%);
+      }
+      .grid a:hover .btn, .grid a:focus-visible .btn {
+        background-image:
+          linear-gradient(135deg, rgba(255,255,255,.10), transparent 60%),
+          radial-gradient(140% 120% at 0% 0%, rgba(255,255,255,.12), transparent 62%);
+      }
+      /* staggered pop-in entrance */
+      .grid a {
+        animation: pop .42s cubic-bezier(.2,.9,.3,1.2) both;
+        animation-delay: var(--pop-in, 0s);
+      }
+      @keyframes pop {
+        0% { opacity: 0; transform: scale(.92) translateY(4px); }
+        100% { opacity: 1; transform: scale(1) translateY(0); }
+      }
+      /* recurring random jitter bling — each tile subtly pulses on its own clock */
+      .grid .btn { animation: jitter var(--jit-dur, 6s) ease-in-out infinite var(--jit-delay, 0s); }
+      @keyframes jitter {
+        0%, 92%, 100% { transform: scale(1); }
+        95% { transform: scale(1.035); }
+        97% { transform: scale(.992); }
+      }
+
       .hidden { display: none !important; }
       .empty {
         grid-column: 1 / -1;
@@ -261,6 +289,28 @@
       footer .row .btn { min-width: 130px; }
       footer .sub { margin-top: 1rem; opacity: .7; }
 
+      /* semver bubble — upper-right corner */
+      .ver {
+        position: fixed;
+        top: .8rem; right: .8rem;
+        z-index: 5;
+        font-size: .68rem;
+        font-family: "SFMono-Regular", Menlo, Consolas, monospace;
+        letter-spacing: .04em;
+        color: var(--white);
+        background: rgba(255,255,255,.08);
+        border: 1px solid rgba(255,255,255,.18);
+        border-radius: 999px;
+        padding: .28rem .65rem;
+        opacity: 0;
+        transform: translateY(-4px);
+        transition: opacity .4s ease, transform .4s ease;
+        backdrop-filter: blur(6px);
+        user-select: none;
+        pointer-events: none;
+      }
+      .ver.ready { opacity: .75; transform: translateY(0); }
+
       /* entrance animation */
       @keyframes rise {
         from { opacity: 0; transform: translateY(8px); }
@@ -276,15 +326,95 @@
       .section:nth-child(8) { animation-delay: .35s; }
       .section:nth-child(9) { animation-delay: .4s; }
 
+      /* mouse spotlight — follows cursor, white-only glow keeps color schema */
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+        background: radial-gradient(300px 300px at var(--mx, 50%) var(--my, 25%), rgba(255,255,255,.10), transparent 70%);
+      }
+
+      /* h1 shimmer — subtle moving sheen on the brand word */
+      h1 .grad {
+        background: linear-gradient(90deg, var(--white) 0%, rgba(255,255,255,.5) 50%, var(--white) 100%);
+        background-size: 200% 100%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: shimmer 7s linear infinite;
+      }
+      @keyframes shimmer { to { background-position: -200% 0; } }
+
+      /* 3D tilt on hover — pauses ambient jitter so transform applies */
+      .grid a:hover .btn, .grid a:focus-visible .btn,
+      footer a:hover .btn, footer a:focus-visible .btn {
+        animation: none;
+        transform: perspective(620px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(-3px) scale(1.02);
+      }
+      .grid a:active .btn, footer a:active .btn {
+        transform: perspective(620px) rotateX(0deg) rotateY(0deg) translateY(0) scale(.97);
+      }
+
+      /* click ripple */
+      .btn .ripple {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255,255,255,.45);
+        transform: translate(-50%, -50%) scale(0);
+        pointer-events: none;
+        animation: ripple .55s ease-out forwards;
+      }
+      @keyframes ripple {
+        to { transform: translate(-50%, -50%) scale(16); opacity: 0; }
+      }
+
+      /* scroll progress bar — thin white gauge at the very top */
+      .progress {
+        position: fixed;
+        top: 0; left: 0;
+        height: 2px;
+        width: var(--p, 0%);
+        background: linear-gradient(90deg, var(--white), rgba(255,255,255,.35));
+        z-index: 6;
+        transition: width .1s linear;
+        box-shadow: 0 0 8px rgba(255,255,255,.4);
+      }
+
+      /* back-to-top */
+      .totop {
+        position: fixed;
+        right: 1rem; bottom: 1rem;
+        z-index: 6;
+        width: 42px; height: 42px;
+        border: 1px solid rgba(255,255,255,.25);
+        background: rgba(255,255,255,.1);
+        color: var(--white);
+        border-radius: 50%;
+        cursor: pointer;
+        backdrop-filter: blur(6px);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1rem;
+        opacity: 0;
+        transform: translateY(12px);
+        pointer-events: none;
+        transition: opacity .25s, transform .25s, background .2s;
+      }
+      .totop.show { opacity: .85; transform: translateY(0); pointer-events: auto; }
+      .totop:hover { background: rgba(255,255,255,.25); transform: translateY(-2px); }
+
       @media (prefers-reduced-motion: reduce) {
         * { animation: none !important; transition: none !important; }
-        body::before { display: none; }
+        body::before, body::after { display: none; }
+        .totop, .progress { display: none; }
       }
     </style>
   </head>
   <body>
+    <span class="ver" id="ver" aria-label="site version">v0.1.127</span>
     <header>
-      <h1>paepcke<span class="dot">.</span>de<span class="cursor" aria-hidden="true"></span></h1>
+      <h1><span class="grad">paepcke</span><span class="dot">.</span>de<span class="cursor" aria-hidden="true"></span></h1>
       <p class="tagline">open source projects</p>
       <div class="search-wrap">
         <span class="search-icon"></span>
@@ -367,6 +497,7 @@
       <section class="section" data-section="O-R">
         <div class="section-head"><span class="label">[ O - R ]</span><span class="rule"></span><span class="count"></span></div>
         <div class="grid">
+          <a href="omc"><span class="btn">omc</span></a>
           <a href="opnborg"><span class="btn">opnborg</span></a>
           <a href="osm2addr"><span class="btn">osm2addr</span></a>
           <a href="reportstyle"><span class="btn">reportstyle</span></a>
@@ -380,7 +511,6 @@
           <a href="solaredge_exporter"><span class="btn">solaredge_exporter</span></a>
           <a href="sphincs"><span class="btn">sphincs</span></a>
           <a href="squidr"><span class="btn">squidr</span></a>
-          <a href="signify"><span class="btn">signify</span></a>
         </div>
       </section>
 
@@ -413,7 +543,6 @@
           <a href="imp.html"><span class="btn">contact impressum</span></a>
         </div>
       </section>
-      <div class="sub"><a href="https://paepcke.de" style="color:inherit">[ home ]</a></div>
     </footer>
 
     <script>
@@ -424,6 +553,25 @@
         const totalEl = document.getElementById('total');
         const sections = document.querySelectorAll('#list .section');
         const grid = () => Array.from(document.querySelectorAll('#list .grid a'));
+
+        // subtle gradient pop bling — staggered pop-in + recurring random jitter per tile
+        (function bling() {
+          const tiles = document.querySelectorAll('#list .grid a');
+          tiles.forEach((link, i) => {
+            link.style.setProperty('--pop-in', (i * 0.018 + Math.random() * 0.05).toFixed(3) + 's');
+            const btn = link.querySelector('.btn');
+            if (btn) {
+              btn.style.setProperty('--jit-delay', (Math.random() * 6).toFixed(2) + 's');
+              btn.style.setProperty('--jit-dur', (5 + Math.random() * 5).toFixed(2) + 's');
+            }
+          });
+        })();
+
+        // semver bubble text is embedded in the #ver element (updated per release)
+        (function versionBubble() {
+          const el = document.getElementById('ver');
+          if (el) el.classList.add('ready');
+        })();
 
         // count badges + grand total
         function recount() {
@@ -593,6 +741,87 @@
               break;
           }
         });
+
+        // mouse spotlight — white glow tracks the cursor
+        (function spotlight() {
+          window.addEventListener('pointermove', (e) => {
+            document.body.style.setProperty('--mx', (e.clientX / window.innerWidth * 100).toFixed(2) + '%');
+            document.body.style.setProperty('--my', (e.clientY / window.innerHeight * 100).toFixed(2) + '%');
+          }, { passive: true });
+        })();
+
+        // 3D tilt — buttons lean toward the cursor on hover
+        (function tilt() {
+          document.querySelectorAll('#list .grid a, footer .row a').forEach(link => {
+            const btn = link.querySelector('.btn');
+            if (!btn) return;
+            link.addEventListener('pointermove', (e) => {
+              const r = link.getBoundingClientRect();
+              const px = (e.clientX - r.left) / r.width - 0.5;
+              const py = (e.clientY - r.top) / r.height - 0.5;
+              btn.style.setProperty('--rx', (py * -10).toFixed(2) + 'deg');
+              btn.style.setProperty('--ry', (px * 12).toFixed(2) + 'deg');
+            });
+            link.addEventListener('pointerleave', () => {
+              btn.style.setProperty('--rx', '0deg');
+              btn.style.setProperty('--ry', '0deg');
+            });
+          });
+        })();
+
+        // click ripple — material-style feedback on every button
+        (function ripples() {
+          document.addEventListener('pointerdown', (e) => {
+            const btn = e.target.closest('.btn');
+            if (!btn) return;
+            const r = btn.getBoundingClientRect();
+            const size = Math.max(r.width, r.height);
+            const s = document.createElement('span');
+            s.className = 'ripple';
+            s.style.width = s.style.height = size + 'px';
+            s.style.left = (e.clientX - r.left) + 'px';
+            s.style.top = (e.clientY - r.top) + 'px';
+            btn.appendChild(s);
+            setTimeout(() => s.remove(), 600);
+          });
+        })();
+
+        // scroll progress bar + back-to-top button
+        (function scrollFX() {
+          const bar = document.createElement('div');
+          bar.className = 'progress';
+          document.body.appendChild(bar);
+          const top = document.createElement('button');
+          top.className = 'totop';
+          top.type = 'button';
+          top.setAttribute('aria-label', 'back to top');
+          top.textContent = '↑';
+          top.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+          document.body.appendChild(top);
+          const onScroll = () => {
+            const h = document.documentElement;
+            const max = h.scrollHeight - h.clientHeight;
+            bar.style.setProperty('--p', (max > 0 ? (h.scrollTop / max) * 100 : 0).toFixed(2) + '%');
+            top.classList.toggle('show', h.scrollTop > 400);
+          };
+          window.addEventListener('scroll', onScroll, { passive: true });
+          onScroll();
+        })();
+
+        // animated count-up for the grand total on load
+        (function countUp() {
+          const target = parseInt(totalEl.textContent, 10) || 0;
+          if (!target || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+          let n = 0;
+          totalEl.textContent = '0';
+          const step = Math.max(1, Math.ceil(target / 28));
+          const tick = () => {
+            n = Math.min(target, n + step);
+            totalEl.textContent = n;
+            if (n < target) requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+        })();
       })();
     </script>
   </body>

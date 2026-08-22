@@ -7,8 +7,7 @@ Guide for agents working in the `paepckehh.github.io` repository.
 > Before a task or change is considered done, all five steps below MUST be completed
 > in this exact order. Skipping or reordering any step is a failure.
 > 1. **Commit** — `git add . && git commit -m '<message>'`.
-> 2. **Tag** — bump the patch segment only: the result is `v0.0.<N+1>`.
->    Never move, delete, or reuse an existing tag.
+> 2. **Tag** — bump the patch segment only: the result is `v0.0.<N+1>`. Never move, delete, or reuse an existing tag.
 
 
 ## What this repository is
