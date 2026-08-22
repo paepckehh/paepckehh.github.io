@@ -3,8 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1, shrink-to-fit=yes" name="viewport">
-    <meta name="go-import" content="paepcke.de/sonicrash git https://github.com/paepckehh/sonicrash">
-    <title>sonicrash</title>
+    <title>paepcke.de</title>
     <style>
       :root {
         --blue: #3367d5;
@@ -13,6 +12,7 @@
         --white: #ffffff;
         --white-dim: rgba(255,255,255,0.65);
         --white-faint: rgba(255,255,255,0.12);
+        --ring: rgba(255,255,255,0.85);
         color-scheme: dark;
       }
       * { box-sizing: border-box; }
@@ -27,6 +27,7 @@
         text-align: center;
         overflow-x: hidden;
       }
+      /* subtle animated aurora layer */
       body::before {
         content: "";
         position: fixed;
@@ -51,6 +52,17 @@
         margin: 0 0 .4rem;
         text-shadow: 0 2px 24px rgba(0,0,0,.25);
       }
+      h1 .dot { color: var(--white-dim); }
+      h1 .cursor {
+        display: inline-block;
+        width: .08em;
+        height: 1em;
+        margin-left: .12em;
+        background: var(--white);
+        vertical-align: -.12em;
+        animation: blink 1.05s steps(2,end) infinite;
+      }
+      @keyframes blink { 50% { opacity: 0; } }
       .tagline {
         color: var(--white-dim);
         font-size: clamp(.85rem, 2vw, 1rem);
@@ -58,33 +70,128 @@
         text-transform: uppercase;
         margin: 0 0 2.2rem;
       }
-      main { position: relative; z-index: 1; padding: 0 1rem 3rem; }
-      .card {
-        display: inline-block;
-        padding: 1.6rem 1.8rem;
-        background: rgba(255,255,255,.06);
-        border: 1px solid rgba(255,255,255,.14);
-        border-radius: 16px;
+
+      /* search */
+      .search-wrap {
+        max-width: 540px;
+        margin: 0 auto 1.4rem;
+        position: relative;
+      }
+      .search {
+        width: 100%;
+        padding: .9rem 2.6rem .9rem 2.6rem;
+        font: inherit;
+        color: var(--white);
+        background: var(--white-faint);
+        border: 1px solid rgba(255,255,255,.18);
+        border-radius: 999px;
+        outline: none;
         backdrop-filter: blur(6px);
+        transition: border-color .2s, background .2s, box-shadow .2s;
       }
-      table { border-collapse: collapse; margin: 0 auto; }
-      td {
-        padding: .5rem .8rem;
-        text-align: left;
-        vertical-align: middle;
+      .search::placeholder { color: var(--white-dim); }
+      .search:focus {
+        border-color: rgba(255,255,255,.55);
+        background: rgba(255,255,255,.18);
+        box-shadow: 0 0 0 4px rgba(255,255,255,.08);
       }
-      td.label {
+      .search-icon {
+        position: absolute;
+        left: 1rem; top: 50%; transform: translateY(-50%);
+        width: 14px; height: 14px;
+        border: 2px solid var(--white-dim);
+        border-radius: 50%;
+        pointer-events: none;
+      }
+      .search-icon::after {
+        content: "";
+        position: absolute;
+        right: -6px; bottom: -2px;
+        width: 6px; height: 2px;
+        background: var(--white-dim);
+        transform: rotate(45deg);
+      }
+      .clear {
+        position: absolute;
+        right: .65rem; top: 50%; transform: translateY(-50%);
+        width: 22px; height: 22px;
+        border: none;
+        background: var(--white-faint);
+        color: var(--white);
+        border-radius: 50%;
+        cursor: pointer;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .15s, background .15s, transform .15s;
+        font-size: .8rem;
+        line-height: 1;
+      }
+      .clear.show { opacity: 1; pointer-events: auto; }
+      .clear:hover { background: rgba(255,255,255,.25); transform: translateY(-50%) scale(1.08); }
+      .hint {
+        margin-top: .7rem;
+        font-size: .75rem;
+        color: var(--white-dim);
+        letter-spacing: .05em;
+      }
+      .hint kbd {
+        font-family: Helvetica;
+        background: var(--white-faint);
+        border: 1px solid rgba(255,255,255,.2);
+        border-radius: 4px;
+        padding: 1px 5px;
+        font-size: .7rem;
+      }
+      .hint .sep { opacity: .5; margin: 0 .35rem; }
+
+      /* status strip */
+      .status {
         font-size: .72rem;
-        font-weight: 700;
         letter-spacing: .14em;
         text-transform: uppercase;
         color: var(--white-dim);
+        margin: .2rem 0 0;
+        height: 1.1rem;
+        transition: color .2s;
+      }
+      .status b { color: var(--white); font-weight: 700; font-variant-numeric: tabular-nums; }
+      .status .dim { opacity: .55; }
+
+      /* sections */
+      main { max-width: 1100px; margin: 0 auto; padding: 0 1rem 3rem; position: relative; z-index: 1; }
+      .section { margin: 0 0 1.8rem; }
+      .section-head {
+        display: flex; align-items: center; gap: .9rem;
+        margin: 0 0 .7rem;
+        opacity: .85;
+      }
+      .section-head .label {
+        font-weight: 700;
+        letter-spacing: .12em;
+        font-size: .8rem;
         white-space: nowrap;
       }
+      .section-head .rule {
+        height: 1px; flex: 1;
+        background: linear-gradient(90deg, rgba(255,255,255,.35), rgba(255,255,255,0));
+      }
+      .section-head .count {
+        font-size: .7rem;
+        color: var(--white-dim);
+        font-variant-numeric: tabular-nums;
+      }
+
+      /* dial grid */
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        gap: .5rem;
+      }
+      .grid a { text-decoration: none; }
       .btn {
         position: relative;
-        display: inline-flex; align-items: center; justify-content: center;
-        padding: .7rem 1rem;
+        display: flex; align-items: center; justify-content: center;
+        padding: .85rem .9rem;
         font: inherit;
         font-size: .9rem;
         color: var(--white);
@@ -95,8 +202,8 @@
         transition: transform .14s ease, background .15s, border-color .15s, color .15s, box-shadow .15s;
         user-select: none;
         overflow: hidden;
-        white-space: nowrap;
       }
+      /* glossy sheen */
       .btn::before {
         content: "";
         position: absolute;
@@ -115,40 +222,607 @@
         box-shadow: 0 6px 18px rgba(0,0,0,.18);
       }
       .btn:active { transform: translateY(0) scale(.98); }
-      a { text-decoration: none; }
+      /* keyboard focus ring */
       a:focus-visible { outline: none; }
-      code {
-        font-family: "SFMono-Regular", Menlo, Consolas, monospace;
-        font-size: .85rem;
+      .btn.is-active {
+        border-color: var(--ring);
+        box-shadow: 0 0 0 3px rgba(255,255,255,.22), 0 8px 20px rgba(0,0,0,.25);
+        transform: translateY(-2px);
       }
-      .home { margin-top: 2.4rem; }
+      .btn.is-active::after {
+        content: "↵";
+        position: absolute;
+        top: 4px; right: 7px;
+        font-size: .62rem;
+        opacity: .8;
+        letter-spacing: 0;
+      }
+
+      /* subtle gradient pop bling — white-only, keeps color schema */
+      .grid .btn {
+        background-image:
+          linear-gradient(135deg, rgba(255,255,255,.05), transparent 55%),
+          radial-gradient(140% 120% at 0% 0%, rgba(255,255,255,.06), transparent 60%);
+      }
+      .grid a:hover .btn, .grid a:focus-visible .btn {
+        background-image:
+          linear-gradient(135deg, rgba(255,255,255,.10), transparent 60%),
+          radial-gradient(140% 120% at 0% 0%, rgba(255,255,255,.12), transparent 62%);
+      }
+      /* staggered pop-in entrance */
+      .grid a {
+        animation: pop .42s cubic-bezier(.2,.9,.3,1.2) both;
+        animation-delay: var(--pop-in, 0s);
+      }
+      @keyframes pop {
+        0% { opacity: 0; transform: scale(.92) translateY(4px); }
+        100% { opacity: 1; transform: scale(1) translateY(0); }
+      }
+      /* recurring random jitter bling — each tile subtly pulses on its own clock */
+      .grid .btn { animation: jitter var(--jit-dur, 6s) ease-in-out infinite var(--jit-delay, 0s); }
+      @keyframes jitter {
+        0%, 92%, 100% { transform: scale(1); }
+        95% { transform: scale(1.035); }
+        97% { transform: scale(.992); }
+      }
+
+      .hidden { display: none !important; }
+      .empty {
+        grid-column: 1 / -1;
+        color: var(--white-dim);
+        padding: 1rem;
+        font-size: .9rem;
+      }
+
+      footer {
+        padding: 1.4rem 1rem 3.5rem;
+        color: var(--white-dim);
+        font-size: .8rem;
+        letter-spacing: .05em;
+        position: relative;
+        z-index: 1;
+      }
+      footer .row {
+        display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center;
+        margin-bottom: 1rem;
+      }
+      footer .row .btn { min-width: 130px; }
+      footer .sub { margin-top: 1rem; opacity: .7; }
+
+      /* semver bubble — upper-right corner */
+      .ver {
+        position: fixed;
+        top: .8rem; right: .8rem;
+        z-index: 5;
+        font-size: .68rem;
+        font-family: "SFMono-Regular", Menlo, Consolas, monospace;
+        letter-spacing: .04em;
+        color: var(--white);
+        background: rgba(255,255,255,.08);
+        border: 1px solid rgba(255,255,255,.18);
+        border-radius: 999px;
+        padding: .28rem .65rem;
+        opacity: 0;
+        transform: translateY(-4px);
+        transition: opacity .4s ease, transform .4s ease;
+        backdrop-filter: blur(6px);
+        user-select: none;
+        pointer-events: none;
+      }
+      .ver.ready { opacity: .75; transform: translateY(0); }
+
+      /* entrance animation */
       @keyframes rise {
         from { opacity: 0; transform: translateY(8px); }
         to   { opacity: 1; transform: translateY(0); }
       }
-      header, main { animation: rise .5s ease both; }
-      main { animation-delay: .08s; }
+      .section, .oss, .personal { animation: rise .5s ease both; }
+      .section:nth-child(2) { animation-delay: .05s; }
+      .section:nth-child(3) { animation-delay: .1s; }
+      .section:nth-child(4) { animation-delay: .15s; }
+      .section:nth-child(5) { animation-delay: .2s; }
+      .section:nth-child(6) { animation-delay: .25s; }
+      .section:nth-child(7) { animation-delay: .3s; }
+      .section:nth-child(8) { animation-delay: .35s; }
+      .section:nth-child(9) { animation-delay: .4s; }
+
+      /* mouse spotlight — follows cursor, white-only glow keeps color schema */
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+        background: radial-gradient(300px 300px at var(--mx, 50%) var(--my, 25%), rgba(255,255,255,.10), transparent 70%);
+      }
+
+      /* h1 shimmer — subtle moving sheen on the brand word */
+      h1 .grad {
+        background: linear-gradient(90deg, var(--white) 0%, rgba(255,255,255,.5) 50%, var(--white) 100%);
+        background-size: 200% 100%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: shimmer 7s linear infinite;
+      }
+      @keyframes shimmer { to { background-position: -200% 0; } }
+
+      /* 3D tilt on hover — pauses ambient jitter so transform applies */
+      .grid a:hover .btn, .grid a:focus-visible .btn,
+      footer a:hover .btn, footer a:focus-visible .btn {
+        animation: none;
+        transform: perspective(620px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(-3px) scale(1.02);
+      }
+      .grid a:active .btn, footer a:active .btn {
+        transform: perspective(620px) rotateX(0deg) rotateY(0deg) translateY(0) scale(.97);
+      }
+
+      /* click ripple */
+      .btn .ripple {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255,255,255,.45);
+        transform: translate(-50%, -50%) scale(0);
+        pointer-events: none;
+        animation: ripple .55s ease-out forwards;
+      }
+      @keyframes ripple {
+        to { transform: translate(-50%, -50%) scale(16); opacity: 0; }
+      }
+
+      /* scroll progress bar — thin white gauge at the very top */
+      .progress {
+        position: fixed;
+        top: 0; left: 0;
+        height: 2px;
+        width: var(--p, 0%);
+        background: linear-gradient(90deg, var(--white), rgba(255,255,255,.35));
+        z-index: 6;
+        transition: width .1s linear;
+        box-shadow: 0 0 8px rgba(255,255,255,.4);
+      }
+
+      /* back-to-top */
+      .totop {
+        position: fixed;
+        right: 1rem; bottom: 1rem;
+        z-index: 6;
+        width: 42px; height: 42px;
+        border: 1px solid rgba(255,255,255,.25);
+        background: rgba(255,255,255,.1);
+        color: var(--white);
+        border-radius: 50%;
+        cursor: pointer;
+        backdrop-filter: blur(6px);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1rem;
+        opacity: 0;
+        transform: translateY(12px);
+        pointer-events: none;
+        transition: opacity .25s, transform .25s, background .2s;
+      }
+      .totop.show { opacity: .85; transform: translateY(0); pointer-events: auto; }
+      .totop:hover { background: rgba(255,255,255,.25); transform: translateY(-2px); }
+
       @media (prefers-reduced-motion: reduce) {
         * { animation: none !important; transition: none !important; }
-        body::before { display: none; }
+        body::before, body::after { display: none; }
+        .totop, .progress { display: none; }
       }
     </style>
   </head>
   <body>
+    <span class="ver" id="ver" aria-label="site version">v0.1.127</span>
     <header>
-      <h1>sonicrash</h1>
-      <p class="tagline">paepcke.de</p>
-    </header>
-    <main>
-      <div class="card">
-        <table>
-          <tr><td class="label">INSTALL</td><td><span class="btn"><code>go install paepcke.de/sonicrash/cmd/sonicrash@latest</code></span></td></tr>
-          <tr><td class="label">DOCS</td><td><a href="https://pkg.go.dev/paepcke.de/sonicrash"><span class="btn">pkg.go.dev/paepcke.de/sonicrash</span></a></td></tr>
-          <tr><td class="label">REPO</td><td><a href="https://github.com/paepckehh/sonicrash"><span class="btn">github.com/paepckehh/sonicrash</span></a></td></tr>
-          <tr><td class="label">DOWNLOAD</td><td><a href="https://github.com/paepckehh/sonicrash/releases"><span class="btn">[click]</span></a></td></tr>
-        </table>
+      <h1><span class="grad">paepcke</span><span class="dot">.</span>de<span class="cursor" aria-hidden="true"></span></h1>
+      <p class="tagline">open source projects</p>
+      <div class="search-wrap">
+        <span class="search-icon"></span>
+        <input id="q" class="search" type="text" placeholder="filter projects…" autocomplete="off" spellcheck="false" aria-label="filter projects">
+        <button id="clear" class="clear" type="button" aria-label="clear">✕</button>
       </div>
-      <div class="home"><a href="https://paepcke.de"><span class="btn">[ home ]</span></a></div>
+      <div class="hint">
+        <kbd>/</kbd> search
+        <span class="sep">·</span>
+        <kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> dial
+        <span class="sep">·</span>
+        <kbd>Enter</kbd> open
+        <span class="sep">·</span>
+        <kbd>Esc</kbd> clear
+      </div>
+      <p class="status" id="status"><span class="dim">ready ·</span> <b id="total">0</b> projects</p>
+    </header>
+
+    <main id="list">
+      <section class="section" data-section="A">
+        <div class="section-head"><span class="label">[ A ]</span><span class="rule"></span><span class="count"></span></div>
+        <div class="grid">
+          <a href="aiagent"><span class="btn">aiagent</span></a>
+          <a href="airloctag"><span class="btn">airloctag</span></a>
+          <a href="appliance-builder"><span class="btn">appliance</span></a>
+          <a href="asn2pf"><span class="btn">asn2pf</span></a>
+        </div>
+      </section>
+
+      <section class="section" data-section="C">
+        <div class="section-head"><span class="label">[ C ]</span><span class="rule"></span><span class="count"></span></div>
+        <div class="grid">
+          <a href="certinfo"><span class="btn">certinfo</span></a>
+          <a href="cliqr"><span class="btn">cliqr</span></a>
+          <a href="codereview"><span class="btn">codereview</span></a>
+          <a href="codescore"><span class="btn">codescore</span></a>
+        </div>
+      </section>
+
+      <section class="section" data-section="D">
+        <div class="section-head"><span class="label">[ D ]</span><span class="rule"></span><span class="count"></span></div>
+        <div class="grid">
+          <a href="daylight"><span class="btn">daylight</span></a>
+          <a href="dnscache"><span class="btn">dnscache</span></a>
+          <a href="dnsinfo"><span class="btn">dnsinfo</span></a>
+          <a href="dnsresolver"><span class="btn">dnsresolver</span></a>
+        </div>
+      </section>
+
+      <section class="section" data-section="F-G">
+        <div class="section-head"><span class="label">[ F - G ]</span><span class="rule"></span><span class="count"></span></div>
+        <div class="grid">
+          <a href="fsdd"><span class="btn">fsdd</span></a>
+          <a href="gitkeys"><span class="btn">gitkeys</span></a>
+          <a href="gpsinfo"><span class="btn">gpsinfo</span></a>
+          <a href="gpstime"><span class="btn">gpstime</span></a>
+        </div>
+      </section>
+
+      <section class="section" data-section="H-L">
+        <div class="section-head"><span class="label">[ H - L ]</span><span class="rule"></span><span class="count"></span></div>
+        <div class="grid">
+          <a href="hq"><span class="btn">hq</span></a>
+          <a href="keys"><span class="btn">keys</span></a>
+          <a href="lockssl"><span class="btn">lockssl</span></a>
+          <a href="logsec"><span class="btn">logsec</span></a>
+          <a href="lteinfo"><span class="btn">lteinfo</span></a>
+        </div>
+      </section>
+
+      <section class="section" data-section="M-N">
+        <div class="section-head"><span class="label">[ M - N ]</span><span class="rule"></span><span class="count"></span></div>
+        <div class="grid">
+          <a href="matrix-log-chat"><span class="btn">matrix-log-chat</span></a>
+          <a href="nixos"><span class="btn">nixos</span></a>
+          <a href="npad"><span class="btn">npad</span></a>
+        </div>
+      </section>
+
+      <section class="section" data-section="O-R">
+        <div class="section-head"><span class="label">[ O - R ]</span><span class="rule"></span><span class="count"></span></div>
+        <div class="grid">
+          <a href="omc"><span class="btn">omc</span></a>
+          <a href="opnborg"><span class="btn">opnborg</span></a>
+          <a href="osm2addr"><span class="btn">osm2addr</span></a>
+          <a href="reportstyle"><span class="btn">reportstyle</span></a>
+        </div>
+      </section>
+
+      <section class="section" data-section="S">
+        <div class="section-head"><span class="label">[ S ]</span><span class="rule"></span><span class="count"></span></div>
+        <div class="grid">
+          <a href="signify"><span class="btn">signify</span></a>
+          <a href="solaredge_exporter"><span class="btn">solaredge_exporter</span></a>
+          <a href="sphincs"><span class="btn">sphincs</span></a>
+          <a href="squidr"><span class="btn">squidr</span></a>
+        </div>
+      </section>
+
+      <section class="section" data-section="T-Z">
+        <div class="section-head"><span class="label">[ T - Z ]</span><span class="rule"></span><span class="count"></span></div>
+        <div class="grid">
+          <a href="tlsinfo"><span class="btn">tlsinfo</span></a>
+          <a href="uniex"><span class="btn">uniex</span></a>
+          <a href="yopass-ng"><span class="btn">yopass-ng</span></a>
+          <a href="zdash"><span class="btn">zdash</span></a>
+        </div>
+      </section>
     </main>
+
+    <footer>
+      <section class="oss">
+        <div class="section-head" style="justify-content:center"><span class="label">OSS</span><span class="rule" style="max-width:120px"></span></div>
+        <div class="row">
+          <a href="https://en.wikipedia.org/wiki/Open-source_software"><span class="btn">What?</span></a>
+          <a href="https://opensource.com/article/21/11/open-source-un-sustainability"><span class="btn">Why?</span></a>
+          <a href="https://opensustain.tech/"><span class="btn">How?</span></a>
+          <a href="https://www.library.hbs.edu/working-knowledge/open-source-software-the-nine-trillion-resource-companies-take-for-granted"><span class="btn">Business?</span></a>
+        </div>
+      </section>
+      <section class="personal">
+        <div class="section-head" style="justify-content:center"><span class="label">PERSONAL</span><span class="rule" style="max-width:120px"></span></div>
+        <div class="row">
+          <a href="https://infosec.exchange/@paepcke"><span class="btn">social blog news</span></a>
+          <a href="https://github.com/paepckehh"><span class="btn">github.com</span></a>
+          <a href="imp.html"><span class="btn">contact impressum</span></a>
+        </div>
+      </section>
+    </footer>
+
+    <script>
+      (function () {
+        const input = document.getElementById('q');
+        const clearBtn = document.getElementById('clear');
+        const status = document.getElementById('status');
+        const totalEl = document.getElementById('total');
+        const sections = document.querySelectorAll('#list .section');
+        const grid = () => Array.from(document.querySelectorAll('#list .grid a'));
+
+        // subtle gradient pop bling — staggered pop-in + recurring random jitter per tile
+        (function bling() {
+          const tiles = document.querySelectorAll('#list .grid a');
+          tiles.forEach((link, i) => {
+            link.style.setProperty('--pop-in', (i * 0.018 + Math.random() * 0.05).toFixed(3) + 's');
+            const btn = link.querySelector('.btn');
+            if (btn) {
+              btn.style.setProperty('--jit-delay', (Math.random() * 6).toFixed(2) + 's');
+              btn.style.setProperty('--jit-dur', (5 + Math.random() * 5).toFixed(2) + 's');
+            }
+          });
+        })();
+
+        // semver bubble text is embedded in the #ver element (updated per release)
+        (function versionBubble() {
+          const el = document.getElementById('ver');
+          if (el) el.classList.add('ready');
+        })();
+
+        // count badges + grand total
+        function recount() {
+          let total = 0;
+          sections.forEach(s => {
+            const n = s.querySelectorAll('.grid a').length;
+            s.querySelector('.count').textContent = n;
+            total += n;
+          });
+          totalEl.textContent = total;
+        }
+        recount();
+
+        // visible dial tiles (in DOM order)
+        function visibleTiles() {
+          return grid().filter(a => a.offsetParent !== null && !a.classList.contains('hidden'));
+        }
+        function visibleSections() {
+          return Array.from(sections).filter(s => s.offsetParent !== null && !s.classList.contains('hidden'));
+        }
+        function sectionTiles(s) {
+          return Array.from(s.querySelectorAll('.grid a')).filter(a => a.offsetParent !== null && !a.classList.contains('hidden'));
+        }
+        // number of grid columns in a section (measured from its first row)
+        function colsOf(tiles) {
+          if (!tiles.length) return 1;
+          const firstTop = tiles[0].offsetTop;
+          let cols = 0;
+          for (const t of tiles) { if (t.offsetTop === firstTop) cols++; else break; }
+          return Math.max(1, cols);
+        }
+        // jump vertically to the next/previous letter category, keeping the
+        // same horizontal (column) position within the target section's first row.
+        function jumpCategory(dir) {
+          if (!active) { const t = visibleTiles()[0]; if (t) setActive(t); return; }
+          const curSec = active.closest('.section');
+          const visSecs = visibleSections();
+          const curIdx = visSecs.indexOf(curSec);
+          let target = null;
+          for (let i = curIdx + dir; i >= 0 && i < visSecs.length; i += dir) {
+            if (sectionTiles(visSecs[i]).length) { target = visSecs[i]; break; }
+          }
+          if (!target) return;
+          const curTiles = sectionTiles(curSec);
+          const curCols = colsOf(curTiles);
+          const col = curTiles.indexOf(active) % curCols;
+          const targetTiles = sectionTiles(target);
+          setActive(targetTiles[Math.min(col, targetTiles.length - 1)]);
+        }
+
+        // active (keyboard-focused) tile
+        let active = null;
+        function setActive(a) {
+          if (active && active.querySelector) active.querySelector('.btn')?.classList.remove('is-active');
+          active = a || null;
+          if (active) {
+            active.querySelector('.btn').classList.add('is-active');
+            active.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+            setStatus('<b>' + active.textContent + '</b> · Enter to open');
+          }
+        }
+
+        function setStatus(html) { status.innerHTML = html; }
+
+        function filter() {
+          const q = input.value.trim().toLowerCase();
+          let total = 0;
+          sections.forEach(s => {
+            let shown = 0;
+            s.querySelectorAll('.grid a').forEach(a => {
+              const text = a.textContent.toLowerCase();
+              const match = !q || text.includes(q);
+              a.classList.toggle('hidden', !match);
+              if (match) shown++;
+            });
+            total += shown;
+            const old = s.querySelector('.empty');
+            if (old) old.remove();
+            s.classList.toggle('hidden', shown === 0);
+            s.querySelector('.count').textContent = shown;
+          });
+
+          let notice = document.getElementById('noresults');
+          if (total === 0) {
+            if (!notice) {
+              notice = document.createElement('div');
+              notice.id = 'noresults';
+              notice.className = 'empty';
+              notice.style.textAlign = 'center';
+              document.getElementById('list').appendChild(notice);
+            }
+            notice.textContent = 'no projects match "' + input.value + '"';
+            setStatus('<span class="dim">no matches</span>');
+            if (active) active.querySelector('.btn')?.classList.remove('is-active');
+            active = null;
+          } else if (notice) {
+            notice.remove();
+            if (!active) setStatus('<span class="dim">ready ·</span> <b>' + total + '</b> projects');
+            else setStatus('<b>' + active.textContent + '</b> · Enter to open');
+          }
+
+          clearBtn.classList.toggle('show', q.length > 0);
+        }
+
+        input.addEventListener('input', filter);
+
+        clearBtn.addEventListener('click', function () {
+          input.value = '';
+          filter();
+          input.focus();
+        });
+
+        // keyboard: / focuses, Esc clears, arrows dial, Enter opens
+        document.addEventListener('keydown', function (e) {
+          if (e.key === '/' && document.activeElement !== input) {
+            e.preventDefault();
+            input.focus();
+            return;
+          }
+          if (e.key === 'Escape') {
+            input.value = '';
+            filter();
+            input.blur();
+            if (active) { active.querySelector('.btn')?.classList.remove('is-active'); }
+            active = null;
+            return;
+          }
+          if (e.key === 'Backspace' && document.activeElement !== input && document.activeElement.tagName !== 'INPUT') {
+            input.focus();
+            return;
+          }
+
+          const tiles = visibleTiles();
+          if (tiles.length === 0) return;
+          let idx = active ? tiles.indexOf(active) : -1;
+
+          switch (e.key) {
+            case 'ArrowRight':
+              e.preventDefault();
+              idx = (idx + 1 + tiles.length) % tiles.length;
+              setActive(tiles[idx]);
+              break;
+            case 'ArrowLeft':
+              e.preventDefault();
+              idx = (idx - 1 + tiles.length) % tiles.length;
+              setActive(tiles[idx]);
+              break;
+            case 'ArrowDown':
+              e.preventDefault();
+              jumpCategory(1);
+              break;
+            case 'ArrowUp':
+              e.preventDefault();
+              jumpCategory(-1);
+              break;
+            case 'Enter':
+              if (active) {
+                e.preventDefault();
+                window.location.href = active.href;
+              }
+              break;
+            case 'Home':
+              if (document.activeElement !== input) { e.preventDefault(); setActive(tiles[0]); }
+              break;
+            case 'End':
+              if (document.activeElement !== input) { e.preventDefault(); setActive(tiles[tiles.length-1]); }
+              break;
+          }
+        });
+
+        // mouse spotlight — white glow tracks the cursor
+        (function spotlight() {
+          window.addEventListener('pointermove', (e) => {
+            document.body.style.setProperty('--mx', (e.clientX / window.innerWidth * 100).toFixed(2) + '%');
+            document.body.style.setProperty('--my', (e.clientY / window.innerHeight * 100).toFixed(2) + '%');
+          }, { passive: true });
+        })();
+
+        // 3D tilt — buttons lean toward the cursor on hover
+        (function tilt() {
+          document.querySelectorAll('#list .grid a, footer .row a').forEach(link => {
+            const btn = link.querySelector('.btn');
+            if (!btn) return;
+            link.addEventListener('pointermove', (e) => {
+              const r = link.getBoundingClientRect();
+              const px = (e.clientX - r.left) / r.width - 0.5;
+              const py = (e.clientY - r.top) / r.height - 0.5;
+              btn.style.setProperty('--rx', (py * -10).toFixed(2) + 'deg');
+              btn.style.setProperty('--ry', (px * 12).toFixed(2) + 'deg');
+            });
+            link.addEventListener('pointerleave', () => {
+              btn.style.setProperty('--rx', '0deg');
+              btn.style.setProperty('--ry', '0deg');
+            });
+          });
+        })();
+
+        // click ripple — material-style feedback on every button
+        (function ripples() {
+          document.addEventListener('pointerdown', (e) => {
+            const btn = e.target.closest('.btn');
+            if (!btn) return;
+            const r = btn.getBoundingClientRect();
+            const size = Math.max(r.width, r.height);
+            const s = document.createElement('span');
+            s.className = 'ripple';
+            s.style.width = s.style.height = size + 'px';
+            s.style.left = (e.clientX - r.left) + 'px';
+            s.style.top = (e.clientY - r.top) + 'px';
+            btn.appendChild(s);
+            setTimeout(() => s.remove(), 600);
+          });
+        })();
+
+        // scroll progress bar + back-to-top button
+        (function scrollFX() {
+          const bar = document.createElement('div');
+          bar.className = 'progress';
+          document.body.appendChild(bar);
+          const top = document.createElement('button');
+          top.className = 'totop';
+          top.type = 'button';
+          top.setAttribute('aria-label', 'back to top');
+          top.textContent = '↑';
+          top.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+          document.body.appendChild(top);
+          const onScroll = () => {
+            const h = document.documentElement;
+            const max = h.scrollHeight - h.clientHeight;
+            bar.style.setProperty('--p', (max > 0 ? (h.scrollTop / max) * 100 : 0).toFixed(2) + '%');
+            top.classList.toggle('show', h.scrollTop > 400);
+          };
+          window.addEventListener('scroll', onScroll, { passive: true });
+          onScroll();
+        })();
+
+        // animated count-up for the grand total on load
+        (function countUp() {
+          const target = parseInt(totalEl.textContent, 10) || 0;
+          if (!target || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+          let n = 0;
+          totalEl.textContent = '0';
+          const step = Math.max(1, Math.ceil(target / 28));
+          const tick = () => {
+            n = Math.min(target, n + step);
+            totalEl.textContent = n;
+            if (n < target) requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+        })();
+      })();
+    </script>
   </body>
 </html>
