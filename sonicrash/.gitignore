@@ -1,0 +1,10 @@
+# do not leak 
+.crush
+.crushrc
+AGENTS.md
+README.md
+internal/*
+/sonicrash
+*.go 
+cmd/sonicrash/sonicrash
+cmd/sonicrash/*.go
