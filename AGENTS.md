@@ -37,10 +37,12 @@ The handful of subdirs **without** a `go-import` tag are non-Go or special pages
 ```
 /                       root landing page + personal material
 index.html              A–Z directory of projects (buttons → subdirs)
-contact.html            contact info (older variant)
+contact.html            contact page (modernized, uses /imp.css, same content as imp.html)
 imp.html                impressum / contact (German legal page)
 paepcke.png             portrait used on imp.html
 CNAME                   "paepcke.de" — required by GitHub Pages, do not delete
+.nojekyll               empty marker — makes Pages serve dot-dirs (needed for .well-known/); do not delete
+.well-known/security.txt RFC 9116 security contact info (copy of root security.txt)
 LICENSE                 license text
 allowed_signers         SSH allowed_signers file (git@paepcke.de identities)
 allowed_signers.hqs     HQS-signed version of allowed_signers
@@ -48,7 +50,7 @@ paepcke.keys            raw SSH public key (ed25519)
 paepcke.keys.hqs        HQS-signed version of paepcke.keys
 IE6RYZ-S3-DLPR3X-RH-QNPPWOXXCB          HQ signature/key blob
 IE6RYZ-S3-DLPR3X-RH-QNPPWOXXCB.signify.pub  signify public key
-<project>/index.html    one landing page per Go project (45 of them)
+<project>/index.html    one landing page per Go project (51 of them)
 keys/                   has both index.html (project page) and the raw `keys` file
 squidr-examples/        example squidr reports (dns.html, tls.html, url.html)
 img/                    source images (JPG / Krita .kra)
@@ -62,7 +64,7 @@ Every project subpage follows the same hand-written template. Match it exactly w
 - `<meta charset="utf-8">` + viewport meta.
 - **go-import** meta (for Go projects) pointing to `github.com/paepckehh/<project>`.
 - External stylesheet `<link rel="stylesheet" href="/page.css">` — one shared minified CSS for all 51 project pages: Helvetica, white text, `#3367d5` blue background, button hover inverts colors. Do not inline per-page CSS and **do not deviate** from this style; consistency across the site is the whole point. (`/style.css` = landing page, `/imp.css` = impressum page, `app.js` = landing-page interactivity; all minified, no external/CDN/webfont deps.)
-- Strict CSP meta on every page: `default-src 'none'; style-src 'self'; img-src 'self'` (landing page adds `script-src 'self'`). No inline styles/scripts on modern pages — legacy `contact.html`, `contact/`, `repo.sigs/`, `repo.signatures/` still use inline CSS + `style-src 'unsafe-inline'` and are intentionally left alone.
+- Strict CSP meta on every page: `default-src 'none'; style-src 'self'; img-src 'self'` (landing page adds `script-src 'self'`). No inline styles/scripts on **any** page — the former legacy pages `contact.html`, `contact/`, `repo.sigs/`, `repo.signatures/` were migrated to shared CSS + strict CSP; do not reintroduce `style-src 'unsafe-inline'`.
 - The landing page shows the current release in `<span id="ver">` — update that text (e.g. `v0.1.137`) whenever tagging a new release.
 - `<title>` = project name; `<h1>` = project name.
 - A `<table>` with rows `INSTALL` / `DOCS` / `REPO` / `DOWNLOAD` as applicable:
@@ -71,9 +73,9 @@ Every project subpage follows the same hand-written template. Match it exactly w
   - `REPO`: GitHub URL (and a second `REPO`/`MIRROR` row if also on sr.ht).
   - `DOWNLOAD`: GitHub releases URL (only if releases are published).
   - Non-Go projects (e.g. `nixos`) only have a `REPO` row.
-- Footer link `<a href="https://paepcke.de"><button>[home]</button></a>`.
+- Footer link `<a href="https://paepcke.de"><span class="btn">[ home ]</span></a>`.
 
-Note: some pages contain stray markup (e.g. `repo.sigs`/`repo.signatures` have a malformed `<tr><td>REPO</td>` with no closing, and a `</svg>` leftover in the home link). These are pre-existing — don't "fix" them unless explicitly asked; the user has not touched them in many commits.
+Note: the old stray markup in `repo.sigs`/`repo.signatures` (malformed `<tr><td>REPO</td>`, leftover `</svg>`) was cleaned up when those pages were migrated to the standard template — keep edited pages clean.
 
 ## Adding a new project
 
