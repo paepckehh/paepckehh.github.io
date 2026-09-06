@@ -1,4 +1,5 @@
 (function () {
+const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 const input = document.getElementById('q');
 const clearBtn = document.getElementById('clear');
 const status = document.getElementById('status');
@@ -68,7 +69,7 @@ if (active && active.querySelector) active.querySelector('.btn')?.classList.remo
 active = a || null;
 if (active) {
 active.querySelector('.btn').classList.add('is-active');
-active.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+active.scrollIntoView({ block: 'nearest', behavior: reduced.matches ? 'auto' : 'smooth' });
 setStatus('<b>' + active.textContent + '</b> · Enter to open');
 }
 }
@@ -95,6 +96,7 @@ if (total === 0) {
 if (!notice) {
 notice = document.createElement('div');
 notice.id = 'noresults';
+notice.setAttribute('role', 'status');
 notice.className = 'empty';
 notice.style.textAlign = 'center';
 document.getElementById('list').appendChild(notice);
@@ -136,6 +138,7 @@ return;
 }
 const tiles = visibleTiles();
 if (tiles.length === 0) return;
+if (!active && document.activeElement !== input) return;
 let idx = active ? tiles.indexOf(active) : -1;
 switch (e.key) {
 case 'ArrowRight':
@@ -217,7 +220,7 @@ top.className = 'totop';
 top.type = 'button';
 top.setAttribute('aria-label', 'back to top');
 top.textContent = '↑';
-top.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+top.addEventListener('click', () => window.scrollTo({ top: 0, behavior: reduced.matches ? 'auto' : 'smooth' }));
 document.body.appendChild(top);
 const onScroll = () => {
 const h = document.documentElement;
@@ -230,7 +233,7 @@ onScroll();
 })();
 (function countUp() {
 const target = parseInt(totalEl.textContent, 10) || 0;
-if (!target || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+if (!target || reduced.matches) return;
 let n = 0;
 totalEl.textContent = '0';
 const step = Math.max(1, Math.ceil(target / 28));
