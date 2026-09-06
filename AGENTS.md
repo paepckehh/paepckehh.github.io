@@ -61,7 +61,9 @@ Every project subpage follows the same hand-written template. Match it exactly w
 
 - `<meta charset="utf-8">` + viewport meta.
 - **go-import** meta (for Go projects) pointing to `github.com/paepckehh/<project>`.
-- Inline `<style>` block — identical across all pages: Helvetica, white text, `#3367d5` blue background, button hover inverts colors. **Do not deviate** from this style; consistency across the site is the whole point.
+- External stylesheet `<link rel="stylesheet" href="/page.css">` — one shared minified CSS for all 51 project pages: Helvetica, white text, `#3367d5` blue background, button hover inverts colors. Do not inline per-page CSS and **do not deviate** from this style; consistency across the site is the whole point. (`/style.css` = landing page, `/imp.css` = impressum page, `app.js` = landing-page interactivity; all minified, no external/CDN/webfont deps.)
+- Strict CSP meta on every page: `default-src 'none'; style-src 'self'; img-src 'self'` (landing page adds `script-src 'self'`). No inline styles/scripts on modern pages — legacy `contact.html`, `contact/`, `repo.sigs/`, `repo.signatures/` still use inline CSS + `style-src 'unsafe-inline'` and are intentionally left alone.
+- The landing page shows the current release in `<span id="ver">` — update that text (e.g. `v0.1.137`) whenever tagging a new release.
 - `<title>` = project name; `<h1>` = project name.
 - A `<table>` with rows `INSTALL` / `DOCS` / `REPO` / `DOWNLOAD` as applicable:
   - `INSTALL`: `go install paepcke.de/<project>/cmd/<project>@latest` (only when a CLI binary exists).
@@ -75,8 +77,8 @@ Note: some pages contain stray markup (e.g. `repo.sigs`/`repo.signatures` have a
 
 ## Adding a new project
 
-1. Create `<project>/index.html` from the template above (copy a similar existing page, e.g. `aiagent/index.html` for a CLI, `nixos/index.html` for a non-Go repo).
-2. Add a `<a href="<project>"><button><project></button></a>` entry to `index.html` in the correct alphabetical section (`[ A ]`, `[ C ]`, ...). Sections are letter-ranged; place the button in the right group.
+1. Create `<project>/index.html` from the template above (copy a similar existing page, e.g. `aiagent/index.html` for a CLI, `nixos/index.html` for a non-Go repo; keep the `/page.css` link and strict CSP meta).
+2. Add a `<a href="<project>"><span class="btn"><project></span></a>` entry to `index.html` in the correct alphabetical section (`[ A ]`, `[ C ]`, ...). Sections are letter-ranged; place the button in the right group.
 3. No other wiring is needed — GitHub Pages serves the subdir automatically.
 
 ## Root index.html gotchas

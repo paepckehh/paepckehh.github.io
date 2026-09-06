@@ -1,552 +1,136 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta content="width=device-width, initial-scale=1, shrink-to-fit=yes" name="viewport">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src 'self'; script-src 'self'">
-    <meta name="referrer" content="no-referrer">
-    <title>paepcke.de</title>
-    <style>
-      :root {
-        --blue: #3367d5;
-        --blue-dim: #2a54ad;
-        --blue-bright: #4a7fe0;
-        --white: #ffffff;
-        --white-dim: rgba(255,255,255,0.65);
-        --white-faint: rgba(255,255,255,0.12);
-        --ring: rgba(255,255,255,0.85);
-        color-scheme: dark;
-      }
-      * { box-sizing: border-box; }
-      html, body { margin: 0; padding: 0; }
-      body {
-        font-family: Helvetica, Arial, sans-serif;
-        color: var(--white);
-        background: radial-gradient(1200px 800px at 50% -10%, var(--blue-bright), var(--blue) 60%, var(--blue-dim));
-        background-attachment: fixed;
-        min-height: 100vh;
-        -webkit-font-smoothing: antialiased;
-        text-align: center;
-        overflow-x: hidden;
-      }
-      /* subtle animated aurora layer */
-      body::before {
-        content: "";
-        position: fixed;
-        inset: 0;
-        pointer-events: none;
-        background:
-          radial-gradient(420px 220px at 15% 12%, rgba(255,255,255,.10), transparent 70%),
-          radial-gradient(520px 280px at 88% 28%, rgba(255,255,255,.07), transparent 70%),
-          radial-gradient(420px 260px at 70% 92%, rgba(255,255,255,.06), transparent 70%);
-        animation: drift 22s ease-in-out infinite alternate;
-        z-index: 0;
-      }
-      @keyframes drift {
-        0%   { transform: translate3d(0,0,0) scale(1); opacity: .85; }
-        100% { transform: translate3d(-1.5%,2%,0) scale(1.04); opacity: 1; }
-      }
-      header { padding: 11vh 1rem 3vh; position: relative; z-index: 1; }
-      h1 {
-        font-size: clamp(2rem, 6vw, 3.5rem);
-        font-weight: 700;
-        letter-spacing: .02em;
-        margin: 0 0 .4rem;
-        text-shadow: 0 2px 24px rgba(0,0,0,.25);
-      }
-      h1 .dot { color: var(--white-dim); }
-      h1 .cursor {
-        display: inline-block;
-        width: .08em;
-        height: 1em;
-        margin-left: .12em;
-        background: var(--white);
-        vertical-align: -.12em;
-        animation: blink 1.05s steps(2,end) infinite;
-      }
-      @keyframes blink { 50% { opacity: 0; } }
-      .tagline {
-        color: var(--white-dim);
-        font-size: clamp(.85rem, 2vw, 1rem);
-        letter-spacing: .18em;
-        text-transform: uppercase;
-        margin: 0 0 2.2rem;
-      }
-
-      /* search */
-      .search-wrap {
-        max-width: 540px;
-        margin: 0 auto 1.4rem;
-        position: relative;
-      }
-      .search {
-        width: 100%;
-        padding: .9rem 2.6rem .9rem 2.6rem;
-        font: inherit;
-        color: var(--white);
-        background: var(--white-faint);
-        border: 1px solid rgba(255,255,255,.18);
-        border-radius: 999px;
-        outline: none;
-        backdrop-filter: blur(6px);
-        transition: border-color .2s, background .2s, box-shadow .2s;
-      }
-      .search::placeholder { color: var(--white-dim); }
-      .search:focus {
-        border-color: rgba(255,255,255,.55);
-        background: rgba(255,255,255,.18);
-        box-shadow: 0 0 0 4px rgba(255,255,255,.08);
-      }
-      .search-icon {
-        position: absolute;
-        left: 1rem; top: 50%; transform: translateY(-50%);
-        width: 14px; height: 14px;
-        border: 2px solid var(--white-dim);
-        border-radius: 50%;
-        pointer-events: none;
-      }
-      .search-icon::after {
-        content: "";
-        position: absolute;
-        right: -6px; bottom: -2px;
-        width: 6px; height: 2px;
-        background: var(--white-dim);
-        transform: rotate(45deg);
-      }
-      .clear {
-        position: absolute;
-        right: .65rem; top: 50%; transform: translateY(-50%);
-        width: 22px; height: 22px;
-        border: none;
-        background: var(--white-faint);
-        color: var(--white);
-        border-radius: 50%;
-        cursor: pointer;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity .15s, background .15s, transform .15s;
-        font-size: .8rem;
-        line-height: 1;
-      }
-      .clear.show { opacity: 1; pointer-events: auto; }
-      .clear:hover { background: rgba(255,255,255,.25); transform: translateY(-50%) scale(1.08); }
-      .hint {
-        margin-top: .7rem;
-        font-size: .75rem;
-        color: var(--white-dim);
-        letter-spacing: .05em;
-      }
-      .hint kbd {
-        font-family: Helvetica;
-        background: var(--white-faint);
-        border: 1px solid rgba(255,255,255,.2);
-        border-radius: 4px;
-        padding: 1px 5px;
-        font-size: .7rem;
-      }
-      .hint .sep { opacity: .5; margin: 0 .35rem; }
-
-      /* status strip */
-      .status {
-        font-size: .72rem;
-        letter-spacing: .14em;
-        text-transform: uppercase;
-        color: var(--white-dim);
-        margin: .2rem 0 0;
-        height: 1.1rem;
-        transition: color .2s;
-      }
-      .status b { color: var(--white); font-weight: 700; font-variant-numeric: tabular-nums; }
-      .status .dim { opacity: .55; }
-
-      /* sections */
-      main { max-width: 1100px; margin: 0 auto; padding: 0 1rem 3rem; position: relative; z-index: 1; }
-      .section { margin: 0 0 1.8rem; }
-      .section-head {
-        display: flex; align-items: center; gap: .9rem;
-        margin: 0 0 .7rem;
-        opacity: .85;
-      }
-      .section-head .label {
-        font-weight: 700;
-        letter-spacing: .12em;
-        font-size: .8rem;
-        white-space: nowrap;
-      }
-      .section-head .rule {
-        height: 1px; flex: 1;
-        background: linear-gradient(90deg, rgba(255,255,255,.35), rgba(255,255,255,0));
-      }
-      .section-head .count {
-        font-size: .7rem;
-        color: var(--white-dim);
-        font-variant-numeric: tabular-nums;
-      }
-
-      /* dial grid */
-      .grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-        gap: .5rem;
-      }
-      .grid a { text-decoration: none; }
-      .btn {
-        position: relative;
-        display: flex; align-items: center; justify-content: center;
-        padding: .85rem .9rem;
-        font: inherit;
-        font-size: .9rem;
-        color: var(--white);
-        background: rgba(255,255,255,.06);
-        border: 1px solid rgba(255,255,255,.14);
-        border-radius: 12px;
-        cursor: pointer;
-        transition: transform .14s ease, background .15s, border-color .15s, color .15s, box-shadow .15s;
-        user-select: none;
-        overflow: hidden;
-      }
-      /* glossy sheen */
-      .btn::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(120deg, transparent 35%, rgba(255,255,255,.12) 50%, transparent 65%);
-        transform: translateX(-120%);
-        transition: transform .55s ease;
-        pointer-events: none;
-      }
-      .btn:hover::before, a:focus-visible .btn::before { transform: translateX(120%); }
-      .btn:hover, a:focus-visible .btn {
-        background: var(--white);
-        color: var(--blue);
-        border-color: var(--white);
-        transform: translateY(-2px);
-        box-shadow: 0 6px 18px rgba(0,0,0,.18);
-      }
-      .btn:active { transform: translateY(0) scale(.98); }
-      /* keyboard focus ring */
-      a:focus-visible { outline: none; }
-      .btn.is-active {
-        border-color: var(--ring);
-        box-shadow: 0 0 0 3px rgba(255,255,255,.22), 0 8px 20px rgba(0,0,0,.25);
-        transform: translateY(-2px);
-      }
-      .btn.is-active::after {
-        content: "↵";
-        position: absolute;
-        top: 4px; right: 7px;
-        font-size: .62rem;
-        opacity: .8;
-        letter-spacing: 0;
-      }
-
-      /* subtle gradient pop bling — white-only, keeps color schema */
-      .grid .btn {
-        background-image:
-          linear-gradient(135deg, rgba(255,255,255,.05), transparent 55%),
-          radial-gradient(140% 120% at 0% 0%, rgba(255,255,255,.06), transparent 60%);
-      }
-      .grid a:hover .btn, .grid a:focus-visible .btn {
-        background-image:
-          linear-gradient(135deg, rgba(255,255,255,.10), transparent 60%),
-          radial-gradient(140% 120% at 0% 0%, rgba(255,255,255,.12), transparent 62%);
-      }
-      /* staggered pop-in entrance */
-      .grid a {
-        animation: pop .42s cubic-bezier(.2,.9,.3,1.2) both;
-        animation-delay: var(--pop-in, 0s);
-      }
-      @keyframes pop {
-        0% { opacity: 0; transform: scale(.92) translateY(4px); }
-        100% { opacity: 1; transform: scale(1) translateY(0); }
-      }
-      /* recurring random jitter bling — each tile subtly pulses on its own clock */
-      .grid .btn { animation: jitter var(--jit-dur, 6s) ease-in-out infinite var(--jit-delay, 0s); }
-      @keyframes jitter {
-        0%, 92%, 100% { transform: scale(1); }
-        95% { transform: scale(1.035); }
-        97% { transform: scale(.992); }
-      }
-
-      .hidden { display: none !important; }
-      .empty {
-        grid-column: 1 / -1;
-        color: var(--white-dim);
-        padding: 1rem;
-        font-size: .9rem;
-      }
-
-      footer {
-        padding: 1.4rem 1rem 3.5rem;
-        color: var(--white-dim);
-        font-size: .8rem;
-        letter-spacing: .05em;
-        position: relative;
-        z-index: 1;
-      }
-      footer .row {
-        display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center;
-        margin-bottom: 1rem;
-      }
-      footer .row .btn { min-width: 130px; }
-      footer .sub { margin-top: 1rem; opacity: .7; }
-
-      /* semver bubble — upper-right corner */
-      .ver {
-        position: fixed;
-        top: .8rem; right: .8rem;
-        z-index: 5;
-        font-size: .68rem;
-        font-family: "SFMono-Regular", Menlo, Consolas, monospace;
-        letter-spacing: .04em;
-        color: var(--white);
-        background: rgba(255,255,255,.08);
-        border: 1px solid rgba(255,255,255,.18);
-        border-radius: 999px;
-        padding: .28rem .65rem;
-        opacity: 0;
-        transform: translateY(-4px);
-        transition: opacity .4s ease, transform .4s ease;
-        backdrop-filter: blur(6px);
-        user-select: none;
-        pointer-events: none;
-      }
-      .ver.ready { opacity: .75; transform: translateY(0); }
-
-      /* entrance animation */
-      @keyframes rise {
-        from { opacity: 0; transform: translateY(8px); }
-        to   { opacity: 1; transform: translateY(0); }
-      }
-      .section, .oss, .personal { animation: rise .5s ease both; }
-      .section:nth-child(2) { animation-delay: .05s; }
-      .section:nth-child(3) { animation-delay: .1s; }
-      .section:nth-child(4) { animation-delay: .15s; }
-      .section:nth-child(5) { animation-delay: .2s; }
-      .section:nth-child(6) { animation-delay: .25s; }
-      .section:nth-child(7) { animation-delay: .3s; }
-      .section:nth-child(8) { animation-delay: .35s; }
-      .section:nth-child(9) { animation-delay: .4s; }
-
-      /* mouse spotlight — follows cursor, white-only glow keeps color schema */
-      body::after {
-        content: "";
-        position: fixed;
-        inset: 0;
-        pointer-events: none;
-        z-index: 0;
-        background: radial-gradient(300px 300px at var(--mx, 50%) var(--my, 25%), rgba(255,255,255,.10), transparent 70%);
-      }
-
-      /* h1 shimmer — subtle moving sheen on the brand word */
-      h1 .grad {
-        background: linear-gradient(90deg, var(--white) 0%, rgba(255,255,255,.5) 50%, var(--white) 100%);
-        background-size: 200% 100%;
-        -webkit-background-clip: text;
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
-        animation: shimmer 7s linear infinite;
-      }
-      @keyframes shimmer { to { background-position: -200% 0; } }
-
-      /* 3D tilt on hover — pauses ambient jitter so transform applies */
-      .grid a:hover .btn, .grid a:focus-visible .btn,
-      footer a:hover .btn, footer a:focus-visible .btn {
-        animation: none;
-        transform: perspective(620px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(-3px) scale(1.02);
-      }
-      .grid a:active .btn, footer a:active .btn {
-        transform: perspective(620px) rotateX(0deg) rotateY(0deg) translateY(0) scale(.97);
-      }
-
-      /* click ripple */
-      .btn .ripple {
-        position: absolute;
-        border-radius: 50%;
-        background: rgba(255,255,255,.45);
-        transform: translate(-50%, -50%) scale(0);
-        pointer-events: none;
-        animation: ripple .55s ease-out forwards;
-      }
-      @keyframes ripple {
-        to { transform: translate(-50%, -50%) scale(16); opacity: 0; }
-      }
-
-      /* scroll progress bar — thin white gauge at the very top */
-      .progress {
-        position: fixed;
-        top: 0; left: 0;
-        height: 2px;
-        width: var(--p, 0%);
-        background: linear-gradient(90deg, var(--white), rgba(255,255,255,.35));
-        z-index: 6;
-        transition: width .1s linear;
-        box-shadow: 0 0 8px rgba(255,255,255,.4);
-      }
-
-      /* back-to-top */
-      .totop {
-        position: fixed;
-        right: 1rem; bottom: 1rem;
-        z-index: 6;
-        width: 42px; height: 42px;
-        border: 1px solid rgba(255,255,255,.25);
-        background: rgba(255,255,255,.1);
-        color: var(--white);
-        border-radius: 50%;
-        cursor: pointer;
-        backdrop-filter: blur(6px);
-        display: flex; align-items: center; justify-content: center;
-        font-size: 1rem;
-        opacity: 0;
-        transform: translateY(12px);
-        pointer-events: none;
-        transition: opacity .25s, transform .25s, background .2s;
-      }
-      .totop.show { opacity: .85; transform: translateY(0); pointer-events: auto; }
-      .totop:hover { background: rgba(255,255,255,.25); transform: translateY(-2px); }
-
-      @media (prefers-reduced-motion: reduce) {
-        * { animation: none !important; transition: none !important; }
-        body::before, body::after { display: none; }
-        .totop, .progress { display: none; }
-      }
-    </style>
-  </head>
-  <body>
-    <span class="ver" id="ver" aria-label="site version">v0.1.127</span>
-    <header>
-      <h1><span class="grad">paepcke</span><span class="dot">.</span>de<span class="cursor" aria-hidden="true"></span></h1>
-      <p class="tagline">open source projects</p>
-      <div class="search-wrap">
-        <span class="search-icon"></span>
-        <input id="q" class="search" type="text" placeholder="filter projects…" autocomplete="off" spellcheck="false" aria-label="filter projects">
-        <button id="clear" class="clear" type="button" aria-label="clear">✕</button>
-      </div>
-      <div class="hint">
-        <kbd>/</kbd> search
-        <span class="sep">·</span>
-        <kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> dial
-        <span class="sep">·</span>
-        <kbd>Enter</kbd> open
-        <span class="sep">·</span>
-        <kbd>Esc</kbd> clear
-      </div>
-      <p class="status" id="status"><span class="dim">ready ·</span> <b id="total">0</b> projects</p>
-    </header>
-
-    <main id="list">
-      <section class="section" data-section="A">
-        <div class="section-head"><span class="label">[ A ]</span><span class="rule"></span><span class="count"></span></div>
-        <div class="grid">
-          <a href="aiagent"><span class="btn">aiagent</span></a>
-          <a href="airloctag"><span class="btn">airloctag</span></a>
-          <a href="appliance-builder"><span class="btn">appliance</span></a>
-          <a href="asn2pf"><span class="btn">asn2pf</span></a>
-        </div>
-      </section>
-
-      <section class="section" data-section="C">
-        <div class="section-head"><span class="label">[ C ]</span><span class="rule"></span><span class="count"></span></div>
-        <div class="grid">
-          <a href="certinfo"><span class="btn">certinfo</span></a>
-          <a href="cliqr"><span class="btn">cliqr</span></a>
-          <a href="codereview"><span class="btn">codereview</span></a>
-          <a href="codescore"><span class="btn">codescore</span></a>
-        </div>
-      </section>
-
-      <section class="section" data-section="D">
-        <div class="section-head"><span class="label">[ D ]</span><span class="rule"></span><span class="count"></span></div>
-        <div class="grid">
-          <a href="daylight"><span class="btn">daylight</span></a>
-          <a href="dnscache"><span class="btn">dnscache</span></a>
-          <a href="dnsinfo"><span class="btn">dnsinfo</span></a>
-          <a href="dnsresolver"><span class="btn">dnsresolver</span></a>
-        </div>
-      </section>
-
-      <section class="section" data-section="F-G">
-        <div class="section-head"><span class="label">[ F - G ]</span><span class="rule"></span><span class="count"></span></div>
-        <div class="grid">
-          <a href="fsdd"><span class="btn">fsdd</span></a>
-          <a href="gitkeys"><span class="btn">gitkeys</span></a>
-          <a href="gpsinfo"><span class="btn">gpsinfo</span></a>
-          <a href="gpstime"><span class="btn">gpstime</span></a>
-        </div>
-      </section>
-
-      <section class="section" data-section="H-L">
-        <div class="section-head"><span class="label">[ H - L ]</span><span class="rule"></span><span class="count"></span></div>
-        <div class="grid">
-          <a href="hq"><span class="btn">hq</span></a>
-          <a href="keys"><span class="btn">keys</span></a>
-          <a href="lockssl"><span class="btn">lockssl</span></a>
-          <a href="logsec"><span class="btn">logsec</span></a>
-          <a href="lteinfo"><span class="btn">lteinfo</span></a>
-        </div>
-      </section>
-
-      <section class="section" data-section="M-N">
-        <div class="section-head"><span class="label">[ M - N ]</span><span class="rule"></span><span class="count"></span></div>
-        <div class="grid">
-          <a href="matrix-log-chat"><span class="btn">matrix-log-chat</span></a>
-          <a href="nixos"><span class="btn">nixos</span></a>
-          <a href="npad"><span class="btn">npad</span></a>
-        </div>
-      </section>
-
-      <section class="section" data-section="O-R">
-        <div class="section-head"><span class="label">[ O - R ]</span><span class="rule"></span><span class="count"></span></div>
-        <div class="grid">
-          <a href="omc"><span class="btn">omc</span></a>
-          <a href="opnborg"><span class="btn">opnborg</span></a>
-          <a href="osm2addr"><span class="btn">osm2addr</span></a>
-          <a href="reportstyle"><span class="btn">reportstyle</span></a>
-        </div>
-      </section>
-
-      <section class="section" data-section="S">
-        <div class="section-head"><span class="label">[ S ]</span><span class="rule"></span><span class="count"></span></div>
-        <div class="grid">
-          <a href="signify"><span class="btn">signify</span></a>
-          <a href="solaredge_exporter"><span class="btn">solaredge_exporter</span></a>
-          <a href="sphincs"><span class="btn">sphincs</span></a>
-          <a href="squidr"><span class="btn">squidr</span></a>
-        </div>
-      </section>
-
-      <section class="section" data-section="T-Z">
-        <div class="section-head"><span class="label">[ T - Z ]</span><span class="rule"></span><span class="count"></span></div>
-        <div class="grid">
-          <a href="tlsinfo"><span class="btn">tlsinfo</span></a>
-          <a href="uniex"><span class="btn">uniex</span></a>
-          <a href="yopass-ng"><span class="btn">yopass-ng</span></a>
-          <a href="zdash"><span class="btn">zdash</span></a>
-        </div>
-      </section>
-    </main>
-
-    <footer>
-      <section class="oss">
-        <div class="section-head" style="justify-content:center"><span class="label">OSS</span><span class="rule" style="max-width:120px"></span></div>
-        <div class="row">
-          <a href="https://en.wikipedia.org/wiki/Open-source_software"><span class="btn">What?</span></a>
-          <a href="https://opensource.com/article/21/11/open-source-un-sustainability"><span class="btn">Why?</span></a>
-          <a href="https://opensustain.tech/"><span class="btn">How?</span></a>
-          <a href="https://www.library.hbs.edu/working-knowledge/open-source-software-the-nine-trillion-resource-companies-take-for-granted"><span class="btn">Business?</span></a>
-        </div>
-      </section>
-      <section class="personal">
-        <div class="section-head" style="justify-content:center"><span class="label">PERSONAL</span><span class="rule" style="max-width:120px"></span></div>
-        <div class="row">
-          <a href="https://infosec.exchange/@paepcke"><span class="btn">social blog news</span></a>
-          <a href="https://github.com/paepckehh"><span class="btn">github.com</span></a>
-          <a href="imp.html"><span class="btn">contact impressum</span></a>
-        </div>
-      </section>
-    </footer>
-
-    <script src="app.js"></script>
-  </body>
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1, shrink-to-fit=yes" name="viewport">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; img-src 'self'; script-src 'self'">
+<meta name="referrer" content="no-referrer">
+<title>paepcke.de</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<span class="ver" id="ver" aria-label="site version">v0.1.136</span>
+<header>
+<h1><span class="grad">paepcke</span><span class="dot">.</span>de<span class="cursor" aria-hidden="true"></span></h1>
+<p class="tagline">open source projects</p>
+<div class="search-wrap">
+<span class="search-icon"></span>
+<input id="q" class="search" type="text" placeholder="filter projects…" autocomplete="off" spellcheck="false" aria-label="filter projects">
+<button id="clear" class="clear" type="button" aria-label="clear">✕</button>
+</div>
+<div class="hint">
+<kbd>/</kbd> search
+<span class="sep">·</span>
+<kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> dial
+<span class="sep">·</span>
+<kbd>Enter</kbd> open
+<span class="sep">·</span>
+<kbd>Esc</kbd> clear
+</div>
+<p class="status" id="status"><span class="dim">ready ·</span> <b id="total">0</b> projects</p>
+</header>
+<main id="list">
+<section class="section" data-section="A">
+<div class="section-head"><span class="label">[ A ]</span><span class="rule"></span><span class="count"></span></div>
+<div class="grid">
+<a href="aiagent"><span class="btn">aiagent</span></a>
+<a href="airloctag"><span class="btn">airloctag</span></a>
+<a href="appliance-builder"><span class="btn">appliance</span></a>
+<a href="asn2pf"><span class="btn">asn2pf</span></a>
+</div>
+</section>
+<section class="section" data-section="C">
+<div class="section-head"><span class="label">[ C ]</span><span class="rule"></span><span class="count"></span></div>
+<div class="grid">
+<a href="certinfo"><span class="btn">certinfo</span></a>
+<a href="cliqr"><span class="btn">cliqr</span></a>
+<a href="codereview"><span class="btn">codereview</span></a>
+<a href="codescore"><span class="btn">codescore</span></a>
+</div>
+</section>
+<section class="section" data-section="D">
+<div class="section-head"><span class="label">[ D ]</span><span class="rule"></span><span class="count"></span></div>
+<div class="grid">
+<a href="daylight"><span class="btn">daylight</span></a>
+<a href="dnscache"><span class="btn">dnscache</span></a>
+<a href="dnsinfo"><span class="btn">dnsinfo</span></a>
+<a href="dnsresolver"><span class="btn">dnsresolver</span></a>
+</div>
+</section>
+<section class="section" data-section="F-G">
+<div class="section-head"><span class="label">[ F - G ]</span><span class="rule"></span><span class="count"></span></div>
+<div class="grid">
+<a href="fsdd"><span class="btn">fsdd</span></a>
+<a href="gitkeys"><span class="btn">gitkeys</span></a>
+<a href="gpsinfo"><span class="btn">gpsinfo</span></a>
+<a href="gpstime"><span class="btn">gpstime</span></a>
+</div>
+</section>
+<section class="section" data-section="H-L">
+<div class="section-head"><span class="label">[ H - L ]</span><span class="rule"></span><span class="count"></span></div>
+<div class="grid">
+<a href="hq"><span class="btn">hq</span></a>
+<a href="keys"><span class="btn">keys</span></a>
+<a href="lockssl"><span class="btn">lockssl</span></a>
+<a href="logsec"><span class="btn">logsec</span></a>
+<a href="lteinfo"><span class="btn">lteinfo</span></a>
+</div>
+</section>
+<section class="section" data-section="M-N">
+<div class="section-head"><span class="label">[ M - N ]</span><span class="rule"></span><span class="count"></span></div>
+<div class="grid">
+<a href="matrix-log-chat"><span class="btn">matrix-log-chat</span></a>
+<a href="nixos"><span class="btn">nixos</span></a>
+<a href="npad"><span class="btn">npad</span></a>
+</div>
+</section>
+<section class="section" data-section="O-R">
+<div class="section-head"><span class="label">[ O - R ]</span><span class="rule"></span><span class="count"></span></div>
+<div class="grid">
+<a href="omc"><span class="btn">omc</span></a>
+<a href="opnborg"><span class="btn">opnborg</span></a>
+<a href="osm2addr"><span class="btn">osm2addr</span></a>
+<a href="reportstyle"><span class="btn">reportstyle</span></a>
+</div>
+</section>
+<section class="section" data-section="S">
+<div class="section-head"><span class="label">[ S ]</span><span class="rule"></span><span class="count"></span></div>
+<div class="grid">
+<a href="signify"><span class="btn">signify</span></a>
+<a href="solaredge_exporter"><span class="btn">solaredge_exporter</span></a>
+<a href="sphincs"><span class="btn">sphincs</span></a>
+<a href="squidr"><span class="btn">squidr</span></a>
+</div>
+</section>
+<section class="section" data-section="T-Z">
+<div class="section-head"><span class="label">[ T - Z ]</span><span class="rule"></span><span class="count"></span></div>
+<div class="grid">
+<a href="tlsinfo"><span class="btn">tlsinfo</span></a>
+<a href="uniex"><span class="btn">uniex</span></a>
+<a href="yopass-ng"><span class="btn">yopass-ng</span></a>
+<a href="zdash"><span class="btn">zdash</span></a>
+</div>
+</section>
+</main>
+<footer>
+<section class="oss">
+<div class="section-head center"><span class="label">OSS</span><span class="rule w120"></span></div>
+<div class="row">
+<a href="https://en.wikipedia.org/wiki/Open-source_software"><span class="btn">What?</span></a>
+<a href="https://opensource.com/article/21/11/open-source-un-sustainability"><span class="btn">Why?</span></a>
+<a href="https://opensustain.tech/"><span class="btn">How?</span></a>
+<a href="https://www.library.hbs.edu/working-knowledge/open-source-software-the-nine-trillion-resource-companies-take-for-granted"><span class="btn">Business?</span></a>
+</div>
+</section>
+<section class="personal">
+<div class="section-head center"><span class="label">PERSONAL</span><span class="rule w120"></span></div>
+<div class="row">
+<a href="https://infosec.exchange/@paepcke"><span class="btn">social blog news</span></a>
+<a href="https://github.com/paepckehh"><span class="btn">github.com</span></a>
+<a href="imp.html"><span class="btn">contact impressum</span></a>
+</div>
+</section>
+</footer>
+<script src="app.js"></script>
+</body>
 </html>

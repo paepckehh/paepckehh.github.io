@@ -1,209 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta content="width=device-width, initial-scale=1, shrink-to-fit=yes" name="viewport">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src 'self'">
-    <meta name="referrer" content="no-referrer">
-    <title>paepcke.de</title>
-    <style>
-      :root {
-        --blue: #3367d5;
-        --blue-dim: #2a54ad;
-        --blue-bright: #4a7fe0;
-        --white: #ffffff;
-        --white-dim: rgba(255,255,255,0.65);
-        --white-faint: rgba(255,255,255,0.12);
-        color-scheme: dark;
-      }
-      * { box-sizing: border-box; }
-      html, body { margin: 0; padding: 0; }
-      body {
-        font-family: Helvetica, Arial, sans-serif;
-        color: var(--white);
-        background: radial-gradient(1200px 800px at 50% -10%, var(--blue-bright), var(--blue) 60%, var(--blue-dim));
-        background-attachment: fixed;
-        min-height: 100vh;
-        -webkit-font-smoothing: antialiased;
-        text-align: center;
-        overflow-x: hidden;
-      }
-      body::before {
-        content: "";
-        position: fixed;
-        inset: 0;
-        pointer-events: none;
-        background:
-          radial-gradient(420px 220px at 15% 12%, rgba(255,255,255,.10), transparent 70%),
-          radial-gradient(520px 280px at 88% 28%, rgba(255,255,255,.07), transparent 70%),
-          radial-gradient(420px 260px at 70% 92%, rgba(255,255,255,.06), transparent 70%);
-        animation: drift 22s ease-in-out infinite alternate;
-        z-index: 0;
-      }
-      @keyframes drift {
-        0%   { transform: translate3d(0,0,0) scale(1); opacity: .85; }
-        100% { transform: translate3d(-1.5%,2%,0) scale(1.04); opacity: 1; }
-      }
-      header { padding: 11vh 1rem 3vh; position: relative; z-index: 1; }
-      h1 {
-        font-size: clamp(2rem, 6vw, 3.5rem);
-        font-weight: 700;
-        letter-spacing: .02em;
-        margin: 0 0 .4rem;
-        text-shadow: 0 2px 24px rgba(0,0,0,.25);
-      }
-      .tagline {
-        color: var(--white-dim);
-        font-size: clamp(.85rem, 2vw, 1rem);
-        letter-spacing: .18em;
-        text-transform: uppercase;
-        margin: 0 0 2.2rem;
-      }
-      main { max-width: 760px; margin: 0 auto; padding: 0 1rem 3rem; position: relative; z-index: 1; }
-      .section { margin: 0 0 1.8rem; }
-      .section-head {
-        display: flex; align-items: center; gap: .9rem;
-        margin: 0 0 .9rem;
-        opacity: .85;
-      }
-      .section-head .label {
-        font-weight: 700;
-        letter-spacing: .12em;
-        font-size: .8rem;
-        white-space: nowrap;
-      }
-      .section-head .rule {
-        height: 1px; flex: 1;
-        background: linear-gradient(90deg, rgba(255,255,255,.35), rgba(255,255,255,0));
-      }
-      .card {
-        display: inline-block;
-        padding: 1.4rem 1.8rem;
-        background: rgba(255,255,255,.06);
-        border: 1px solid rgba(255,255,255,.14);
-        border-radius: 16px;
-        backdrop-filter: blur(6px);
-      }
-      .row { display: flex; align-items: center; justify-content: center; gap: .6rem; margin: .35rem 0; flex-wrap: wrap; }
-      .row .cap {
-        font-size: .72rem;
-        font-weight: 700;
-        letter-spacing: .14em;
-        text-transform: uppercase;
-        color: var(--white-dim);
-        white-space: nowrap;
-        min-width: 8rem;
-        text-align: right;
-      }
-      .btn {
-        position: relative;
-        display: inline-flex; align-items: center; justify-content: center;
-        padding: .6rem 1rem;
-        font: inherit;
-        font-size: .85rem;
-        color: var(--white);
-        background: rgba(255,255,255,.06);
-        border: 1px solid rgba(255,255,255,.14);
-        border-radius: 12px;
-        cursor: pointer;
-        transition: transform .14s ease, background .15s, border-color .15s, color .15s, box-shadow .15s;
-        user-select: none;
-        overflow: hidden;
-        white-space: nowrap;
-        max-width: 92vw;
-      }
-      .btn::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(120deg, transparent 35%, rgba(255,255,255,.12) 50%, transparent 65%);
-        transform: translateX(-120%);
-        transition: transform .55s ease;
-        pointer-events: none;
-      }
-      .btn:hover::before, a:focus-visible .btn::before { transform: translateX(120%); }
-      .btn:hover, a:focus-visible .btn {
-        background: var(--white);
-        color: var(--blue);
-        border-color: var(--white);
-        transform: translateY(-2px);
-        box-shadow: 0 6px 18px rgba(0,0,0,.18);
-      }
-      .btn:active { transform: translateY(0) scale(.98); }
-      a { text-decoration: none; }
-      a:focus-visible { outline: none; }
-      code {
-        font-family: "SFMono-Regular", Menlo, Consolas, monospace;
-        font-size: .8rem;
-      }
-      .portrait {
-        width: 160px; height: auto;
-        border-radius: 14px;
-        border: 1px solid rgba(255,255,255,.18);
-        box-shadow: 0 8px 24px rgba(0,0,0,.25);
-        margin: .4rem 0 1.4rem;
-      }
-      .legal {
-        text-align: left;
-        font-size: .85rem;
-        line-height: 1.5;
-        color: var(--white-dim);
-        white-space: pre-wrap;
-        max-width: 46ch;
-        margin: 0 auto;
-      }
-      .note {
-        font-size: .75rem;
-        color: var(--white-dim);
-        letter-spacing: .05em;
-        margin: 0 0 .7rem;
-      }
-      .home { margin-top: 2.4rem; }
-      @keyframes rise {
-        from { opacity: 0; transform: translateY(8px); }
-        to   { opacity: 1; transform: translateY(0); }
-      }
-      header, main { animation: rise .5s ease both; }
-      main { animation-delay: .08s; }
-      @media (prefers-reduced-motion: reduce) {
-        * { animation: none !important; transition: none !important; }
-        body::before { display: none; }
-      }
-    </style>
-  </head>
-  <body>
-    <header>
-      <h1>paepcke.de</h1>
-      <p class="tagline">contact & impressum</p>
-      <img class="portrait" src="paepcke.png" alt="portrait">
-    </header>
-    <main>
-      <section class="section">
-        <div class="section-head"><span class="label">CONTACT</span><span class="rule"></span></div>
-        <div class="card">
-          <div class="row"><span class="cap">email</span><span class="btn"><code>contact (at) paepcke.de</code></span></div>
-          <div class="row"><span class="cap">social</span><a href="https://infosec.exchange/@paepcke"><span class="btn">@paepcke@infosec.exchange</span></a></div>
-        </div>
-      </section>
-      <section class="section">
-        <div class="section-head"><span class="label">KEYS</span><span class="rule"></span></div>
-        <div class="card">
-          <div class="row"><span class="cap">hq</span><a href="https://paepcke.de/IE6RYZ-S3-DLPR3X-RH-QNPPWOXXCB"><span class="btn"><code>IE6RYZ-S3-DLPR3X-RH-QNPPWOXXCB</code></span></a></div>
-          <div class="row"><span class="cap">signify</span><a href="https://paepcke.de/IE6RYZ-S3-DLPR3X-RH-QNPPWOXXCB.signify.pub"><span class="btn"><code>RWT0z7As1suN0oL5ia6M3O47pYHcttgaMGW4NpOBRvJ6TV0l1HCkP26Q</code></span></a></div>
-          <div class="row"><span class="cap">smime/(r)age/ssh</span><a href="https://paepcke.de/paepcke.keys"><span class="btn"><code>AAAAC3NzaC1lZDI1NTE5AAAAIPCNVNaHf5m/3cO+2s4xV+IaDgTtRXwYOvGTnTPCHMR6</code></span></a></div>
-          <div class="row"><span class="cap">repos</span><a href="https://paepcke.de/allowed_signers"><span class="btn">allowed_signers</span></a> <a href="https://paepcke.de/allowed_signers.hqs"><span class="btn">hqs</span></a></div>
-        </div>
-      </section>
-      <section class="section">
-        <div class="section-head"><span class="label">IMPRESSUM</span><span class="rule"></span></div>
-        <p class="note">[If you are not german, just skip it!]</p>
-        <div class="card">
-          <pre class="legal">Kontakt: Michael Paepcke, Eimsbuetteler Strasse 15, D-22769 Hamburg
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1, shrink-to-fit=yes" name="viewport">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; img-src 'self'">
+<meta name="referrer" content="no-referrer">
+<title>paepcke.de</title>
+<link rel="stylesheet" href="/imp.css">
+</head>
+<body>
+<header>
+<h1>paepcke.de</h1>
+<p class="tagline">contact & impressum</p>
+<img class="portrait" src="paepcke.png" alt="portrait">
+</header>
+<main>
+<section class="section">
+<div class="section-head"><span class="label">CONTACT</span><span class="rule"></span></div>
+<div class="card">
+<div class="row"><span class="cap">email</span><span class="btn"><code>contact (at) paepcke.de</code></span></div>
+<div class="row"><span class="cap">social</span><a href="https://infosec.exchange/@paepcke"><span class="btn">@paepcke@infosec.exchange</span></a></div>
+</div>
+</section>
+<section class="section">
+<div class="section-head"><span class="label">KEYS</span><span class="rule"></span></div>
+<div class="card">
+<div class="row"><span class="cap">hq</span><a href="https://paepcke.de/IE6RYZ-S3-DLPR3X-RH-QNPPWOXXCB"><span class="btn"><code>IE6RYZ-S3-DLPR3X-RH-QNPPWOXXCB</code></span></a></div>
+<div class="row"><span class="cap">signify</span><a href="https://paepcke.de/IE6RYZ-S3-DLPR3X-RH-QNPPWOXXCB.signify.pub"><span class="btn"><code>RWT0z7As1suN0oL5ia6M3O47pYHcttgaMGW4NpOBRvJ6TV0l1HCkP26Q</code></span></a></div>
+<div class="row"><span class="cap">smime/(r)age/ssh</span><a href="https://paepcke.de/paepcke.keys"><span class="btn"><code>AAAAC3NzaC1lZDI1NTE5AAAAIPCNVNaHf5m/3cO+2s4xV+IaDgTtRXwYOvGTnTPCHMR6</code></span></a></div>
+<div class="row"><span class="cap">repos</span><a href="https://paepcke.de/allowed_signers"><span class="btn">allowed_signers</span></a> <a href="https://paepcke.de/allowed_signers.hqs"><span class="btn">hqs</span></a></div>
+</div>
+</section>
+<section class="section">
+<div class="section-head"><span class="label">IMPRESSUM</span><span class="rule"></span></div>
+<p class="note">[If you are not german, just skip it!]</p>
+<div class="card">
+<pre class="legal">Kontakt: Michael Paepcke, Eimsbuetteler Strasse 15, D-22769 Hamburg
 
-Datenschutzerklaerung:  Der Webserver schreibt intern ggf. Logdateien mit den Zugriffen und den IP-Adressen der Zugreifer. Diese dienen der Fehlersuche und Schutz meines Providers im Krisenfall. Es gibt von meiner Seite keinen Zugriff. Es gibt keine Benutzerkonten oder (Tracking-) Cookies. Es werden keine weiteren Daten von mir erhoben, gespeichert oder ausgewertet.</pre>
-        </div>
-      </section>
-      <div class="home"><a href="https://paepcke.de"><span class="btn">[ home ]</span></a></div>
-    </main>
-  </body>
+Datenschutzerklaerung:  Der Webserver schreibt intern ggf. Logdateien mit den Zugriffen und den IP-Adressen der Zugreifer. Diese dienen der Fehlersuche und Schutz meines Providers im Krisenfall. Es gibt von meiner Seite keinen Zugriff. Es gibt keine Benutzerkonten oder (Tracking-) Cookies. Es werden keine weiteren Daten von mir erhoben, gespeichert oder ausgewertet.</pre></div>
+</section>
+<div class="home"><a href="https://paepcke.de"><span class="btn">[ home ]</span></a></div>
+</main>
+</body>
 </html>
